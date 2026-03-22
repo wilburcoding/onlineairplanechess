@@ -7,7 +7,9 @@
 ## TODO
  - [x] Figure out how to zoom and scroll animations
  - [ ] Figure out how Pixi.js works 
- - [ ] Use Socket.io for multiplayer functions?
+ - [ ] Use Socket.io for multiplayer functions? -> Need to use separate API
+   - [ ] Implement server-side -> need to fix CORS issue
+   - [ ] Implement client-side
  - [ ] Create game UI
  - [ ] In game chat?
  - [x] Figure out theme
@@ -26,7 +28,7 @@ Theme colors:
 Game FLow
  - Presses start button
    - Shows game screen
-   - Waits for players
+   - Waits for players and show room code
    - Show start game button if there is 2-4 people in the game
    - Play game
      - End game if any users disconnect
@@ -42,3 +44,4 @@ Game FLow
    - Show results and option to return to home screen
  - For both of these, if the host leaves the waiting room for a game
    - Show message and return to home screen
+

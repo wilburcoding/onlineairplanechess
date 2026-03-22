@@ -10,9 +10,12 @@
     "dev": "vite"
   },
   "dependencies": {
+    "express": "^5.2.1",
     "jquery": "^4.0.0",
     "pixi-viewport": "^6.0.3",
-    "pixi.js": "^8.8.1"
+    "pixi.js": "^8.8.1",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

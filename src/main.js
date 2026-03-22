@@ -1,15 +1,14 @@
-import { Application, Assets, Sprite, Texture } from "pixi.js";
+import {
+  Application,
+  Assets,
+  Sprite,
+  Texture,
+} from "pixi.js";
 import { Viewport } from "pixi-viewport";
+import { io } from "socket.io-client";
 
 
-$("#start").on("click", function () {
-  console.log("do something here")
-});
-
-$("#join").on("click", function() {
-  console.log("do something here")
-})
-(async () => {
+async function init() {
   // Create a new application
   const app = new Application();
 
@@ -34,5 +33,27 @@ $("#join").on("click", function() {
   // activate plugins
   viewport.drag().pinch().wheel().decelerate();
 
+  // Replace with your Express server URL
+  const socket = io("http://localhost:3001");
+
+  socket.on("connect", () => {
+    console.log("Connected to server with ID:", socket.id);
+  });
+
+
   
-})();
+}
+
+window.onload = function () {
+  $("#start").on("click", function () {
+    console.log("start")
+  });
+
+  $("#join").on("click", function() {
+    console.log("join")
+  })
+
+  init()
+
+
+}
