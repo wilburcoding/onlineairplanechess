@@ -34,7 +34,9 @@ async function init() {
   viewport.drag().pinch().wheel().decelerate();
 
   // Replace with your Express server URL
-  const socket = io("http://localhost:3001");
+  const socket = io("http://localhost:3001", {
+    withCredentials: true,
+  });
 
   socket.on("connect", () => {
     console.log("Connected to server with ID:", socket.id);

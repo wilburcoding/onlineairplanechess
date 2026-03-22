@@ -6,7 +6,9 @@ let io;
 export const initSocket = (httpServer) => {
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: "*", // Configure CORS for your client's origin
+      origin: "http://localhost:8080",
+      methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 
