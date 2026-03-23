@@ -95,6 +95,7 @@ window.onload = function () {
     $("#pixi-overlay").css("opacity", 0);
     $("#pixi-overlay").show();
     $("#sidebar-left").hide();
+    $("#sidebar-right").hide();
     $("#pixi-overlay").animate({
       opacity:1,
     }, 250, function() {

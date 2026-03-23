@@ -11,40 +11,94 @@
       href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap"
       rel="stylesheet"
     />
-    <script src="https://kit.fontawesome.com/3f34c302de.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/3f34c302de.js"
+      crossorigin="anonymous"
+    ></script>
     <title>Online Airplane Chess</title>
   </head>
 
   <body>
     <div id="app">
       <div id="pixi-container"></div>
-      <div id="pixi-overlay" style="pointer-events: none;">
-        <div id="sidebar-left" style="left: 0" class="sidebar">
-
-        </div>
-        <div id="sidebar-right" style="right: 0" class="sidebar">
-        
-        </div>
+      <div id="pixi-overlay" style="pointer-events: none">
+        <div id="sidebar-left" style="left: 0" class="sidebar"></div>
+        <div id="sidebar-right" style="right: 0" class="sidebar"></div>
         <div id="waiting-room">
-          <h1>Waiting for Players... (<span id="player-count">0</span>/4)</h1>
-          <div id="players-list">
-            <div class="player-card">
+          <h1>Waiting for Players...</h1>
+          <p style="margin-top: 0px; margin-bottom: 10px">
+            Invite friends to join your game using the join code below.
+          </p>
+          <div id="join-code-card">
+            <p id="join-code-value">
+              Join Code: 123456
+              <i class="fa-regular fa-copy" id="copy-code"></i>
+            </p>
+          </div>
 
+          <div id="players-list">
+            <div class="player-card user-ready">
+              <div class="user-icon-container">
+                <div class="user-status">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+                <i class="fa-regular fa-user user-icon"> </i>
+              </div>
+
+              <p>Player 1</p>
+            </div>
+            <div class="player-card user-waiting">
+              <div class="user-icon-container">
+                <div class="user-status">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+                <i class="fa-regular fa-user user-icon"> </i>
+              </div>
+
+              <p>Player 2</p>
+            </div>
+            <div class="player-card user-ready">
+              <div class="user-icon-container user-ready" >
+                <div class="user-status">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+                <i class="fa-regular fa-user user-icon"> </i>
+              </div>
+
+              <p>Player 3</p>
+            </div>
+            <div class="player-card user-waiting">
+              <div class="user-icon-container ">
+                <div class="user-status">
+                  <i class="fa-regular fa-clock"></i>
+                </div>
+                <i class="fa-regular fa-user user-icon"> </i>
+              </div>
+
+              <p>Player 4</p>
             </div>
           </div>
-        
-
         </div>
-
       </div>
       <div id="jcontainer">
         <div id="join-container">
-          <i class="fa-solid fa-xmark" style="position:absolute;top:10px;left:10px;font-size:25px;" id="join-close"></i>
+          <i
+            class="fa-solid fa-xmark"
+            style="position: absolute; top: 10px; left: 10px; font-size: 25px"
+            id="join-close"
+          ></i>
           <h1>Join a Game</h1>
-          <p style="margin-top:0px;margin-bottom:15px;">Enter the 6-digit join code from the host</p>
-          <input type="text" inputmode="numeric" id="joincode" placeholder="Join Code" style="margin-bottom:5px;"/>
+          <p style="margin-top: 0px; margin-bottom: 15px">
+            Enter the 6-digit join code from the host
+          </p>
+          <input
+            type="text"
+            inputmode="numeric"
+            id="joincode"
+            placeholder="Join Code"
+            style="margin-bottom: 5px"
+          />
           <button id="join-button">Join Game</button>
-
         </div>
       </div>
       <div id="ui-layer">
