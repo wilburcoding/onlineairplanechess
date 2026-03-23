@@ -1,29 +1,66 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/public/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
-    <title>PixiJS - Template</title>
-</head>
+    <link rel="stylesheet" href="/public/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://kit.fontawesome.com/3f34c302de.js" crossorigin="anonymous"></script>
+    <title>Online Airplane Chess</title>
+  </head>
 
-<body>
+  <body>
     <div id="app">
-        <div id="pixi-container"></div>
-        <div id="ui-layer">
-          <div id="ui-container">
-            <h1>Online Airplane Chess</h1>
-            <p>Play Airplane Chess multiplayer online!</p>
-            <button id="start">Start a Game</button>
-            <button id="join">Join a Game</button>
-          </div>
+      <div id="pixi-container"></div>
+      <div id="pixi-overlay" style="pointer-events: none;">
+        <div id="sidebar-left" style="left: 0" class="sidebar">
+
         </div>
+        <div id="sidebar-right" style="right: 0" class="sidebar">
+        
+        </div>
+        <div id="waiting-room">
+          <h1>Waiting for Players... (<span id="player-count">0</span>/4)</h1>
+          <div id="players-list">
+            <div class="player-card">
+
+            </div>
+          </div>
+        
+
+        </div>
+
+      </div>
+      <div id="jcontainer">
+        <div id="join-container">
+          <i class="fa-solid fa-xmark" style="position:absolute;top:10px;left:10px;font-size:25px;" id="join-close"></i>
+          <h1>Join a Game</h1>
+          <p style="margin-top:0px;margin-bottom:15px;">Enter the 6-digit join code from the host</p>
+          <input type="text" inputmode="numeric" id="joincode" placeholder="Join Code" style="margin-bottom:5px;"/>
+          <button id="join-button">Join Game</button>
+
+        </div>
+      </div>
+      <div id="ui-layer">
+        <div id="ui-container">
+          <h1>Online Airplane Chess</h1>
+          <p>Play Airplane Chess multiplayer online!</p>
+          <button id="start">Start a Game</button>
+          <button id="join">Join a Game</button>
+        </div>
+      </div>
     </div>
-    <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+    <script
+      src="https://code.jquery.com/jquery-4.0.0.min.js"
+      integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao="
+      crossorigin="anonymous"
+    ></script>
     <script type="module" src="/src/main.js"></script>
-</body>
+  </body>
 </html>

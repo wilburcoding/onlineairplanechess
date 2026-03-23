@@ -9,8 +9,15 @@
  - [ ] Figure out how Pixi.js works 
  - [ ] Use Socket.io for multiplayer functions? -> Need to use separate API
    - [ ] Implement server-side -> need to fix CORS issue
+     - [ ] Connect and disconnect
+     - [ ] Handle rooms logic
+     - [ ] Handle waiting room logic
+     - [ ] Handle user disconnecting (from game & lobby)
    - [ ] Implement client-side
- - [ ] Create game UI
+     - [ ] Handle rooms logic
+     - [ ] Handle waiting in room logic
+     - [ ] More TBD
+ - [ ] Design and implement in-game UI
  - [ ] In game chat?
  - [x] Figure out theme
    - [x] Minimliast game theme? 

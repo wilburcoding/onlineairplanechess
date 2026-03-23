@@ -3,6 +3,8 @@ import { Server as SocketIOServer } from "socket.io";
 
 let io;
 
+let rooms = {};
+
 export const initSocket = (httpServer) => {
   io = new SocketIOServer(httpServer, {
     cors: {
@@ -13,11 +15,15 @@ export const initSocket = (httpServer) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("A user connected");
+    const uid = socket.id
+    console.log("User " + uid + " connected");
+
 
     socket.on("disconnect", () => {
-      console.log("User disconnected");
+      console.log("User " + uid + " disconnected");
     });
+
+    
   });
 
   return io;

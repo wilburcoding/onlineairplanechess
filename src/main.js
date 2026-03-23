@@ -1,12 +1,6 @@
-import {
-  Application,
-  Assets,
-  Sprite,
-  Texture,
-} from "pixi.js";
+import { Application, Assets, Sprite, Texture } from "pixi.js";
 import { Viewport } from "pixi-viewport";
 import { io } from "socket.io-client";
-
 
 async function init() {
   // Create a new application
@@ -43,19 +37,70 @@ async function init() {
   });
 
 
-  
 }
 
 window.onload = function () {
-  $("#start").on("click", function () {
-    console.log("start")
+  // Hnalding home screen functionality
+
+  $("#joincode").on("input", function () {
+    $(this).val(
+      $(this)
+        .val()
+        .replace(/[^0-9]/g, ""),
+    );
+
+    if ($(this).val().length > 6) {
+      $(this).val($(this).val().substring(0, 6));
+    }
   });
 
-  $("#join").on("click", function() {
-    console.log("join")
-  })
+  $("#join").on("click", function () {
+    $("#jcontainer").css("opacity", "0");
+    $("#jcontainer").show();
+    $("#jcontainer").animate(
+      {
+        opacity: 1,
+      },
+      250,
+    );
+  });
 
-  init()
+  $("#join-close").on("click", function () {
+    $("#jcontainer").animate(
+      {
+        opacity: 0,
+      },
+      250,
+      function () {
+        $("#jcontainer").hide();
+      },
+    );
+  });
+
+  $("#jcontainer").hide();
+  $("#pixi-overlay").hide(); 
+
+  init();
 
 
-}
+  // Handling waiting room functionality
+
+  $("#start").on("click", function () {
+    //TODO
+    $("#ui-layer").animate({
+      opacity:0,
+    }, 250, function() {
+      $("#ui-layer").hide();
+    })
+    $("#pixi-overlay").css("opacity", 0);
+    $("#pixi-overlay").show();
+    $("#sidebar-left").hide();
+    $("#pixi-overlay").animate({
+      opacity:1,
+    }, 250, function() {
+      // Show waiting room UI
+
+    });
+    
+  });
+};
