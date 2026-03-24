@@ -52,3 +52,24 @@ Game FLow
  - For both of these, if the host leaves the waiting room for a game
    - Show message and return to home screen
 
+Room Logic
+ - On room create
+   - Create room and add host in it
+     - Emit room data to host 
+     - Host dynamically updates UI 
+   - Wait for other users to join
+     - Emit updated room data to all users 
+     - All users dynamically update their UI based on 
+   - If any user leaves (disconnects)
+     - Emit to all users
+     - All users show message and return to home screen
+   - Wait for host start
+   - Game ongoing
+     - Continuously send updated game states to all users
+     - Users update UI and game with these changes
+   - Any user disconnects 
+     - End game for all users
+     - All users show message and return to home screen
+   - Game completed
+     - Emit to all users
+     - Show results and return to home screen

@@ -31,52 +31,56 @@
           </p>
           <div id="join-code-card">
             <p id="join-code-value">
-              Join Code: 123456
+              Join Code: <span id="join-code"></span>
               <i class="fa-regular fa-copy" id="copy-code"></i>
             </p>
           </div>
 
           <div id="players-list">
-            <div class="player-card user-ready">
+            <div class="player-card user-ready" id="w-p1-card">
               <div class="user-icon-container">
-                <div class="user-status">
+                <div class="user-status" id="w-p1-status">
                   <i class="fa-solid fa-check"></i>
                 </div>
                 <i class="fa-regular fa-user user-icon"> </i>
               </div>
 
-              <p>Player 1</p>
+              <p id="w-p1-name">Player 1</p>
             </div>
-            <div class="player-card user-waiting">
+            <div class="player-card user-waiting" id="w-p2-card">
               <div class="user-icon-container">
-                <div class="user-status">
+                <div class="user-status" id="w-p2-status">
                   <i class="fa-solid fa-check"></i>
                 </div>
                 <i class="fa-regular fa-user user-icon"> </i>
               </div>
 
-              <p>Player 2</p>
+              <p id="w-p2-name">Player 2</p>
             </div>
-            <div class="player-card user-ready">
+            <div class="player-card user-ready" id="w-p3-card">
               <div class="user-icon-container user-ready" >
-                <div class="user-status">
+                <div class="user-status" id="w-p3-status">
                   <i class="fa-solid fa-check"></i>
                 </div>
                 <i class="fa-regular fa-user user-icon"> </i>
               </div>
 
-              <p>Player 3</p>
+              <p id="w-p3-name">Player 3</p>
             </div>
-            <div class="player-card user-waiting">
+            <div class="player-card user-waiting" id="w-p4-card">
               <div class="user-icon-container ">
-                <div class="user-status">
+                <div class="user-status" id="w-p4-status">
                   <i class="fa-regular fa-clock"></i>
                 </div>
                 <i class="fa-regular fa-user user-icon"> </i>
               </div>
 
-              <p>Player 4</p>
+              <p id="w-p4-name">Player 4</p>
             </div>
+          </div>
+          <div id="host-actions-container"> 
+            <button id="cancel-game">Cancel Game</button>
+            <button id="start-game">Start Game</button>
           </div>
         </div>
       </div>
@@ -99,12 +103,14 @@
             style="margin-bottom: 5px"
           />
           <button id="join-button">Join Game</button>
+          <p id="message"></p>
         </div>
       </div>
       <div id="ui-layer">
         <div id="ui-container">
-          <h1>Online Airplane Chess</h1>
-          <p>Play Airplane Chess multiplayer online!</p>
+          <h1 style="margin-bottom:0px;">Online Airplane Chess</h1>
+          <p style="width:300px;text-align:center;">Play Airplane Chess multiplayer online! Choose your username to get started!</p>
+          <input type="text" id="username" style="width:80%;margin-top:5px;margin-bottom:10px;" placeholder="Enter your username" />
           <button id="start">Start a Game</button>
           <button id="join">Join a Game</button>
         </div>

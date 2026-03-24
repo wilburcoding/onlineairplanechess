@@ -41,12 +41,37 @@ export const initSocket = (httpServer) => {
       console.log("User " + uid + " disconnected");
     });
 
-    socket.on("create-room", () => {
+    socket.on("create-room", (data) => {
         let room_data = {
             id: generate_id(6),
-            players:[uid],
+            code: generate_room_code(),
+            players:[{id: uid, username: data.username}],
+            state: "waiting"
         }
+        rooms[room_data.id] = room_data;
+        socket.join(room_data.id);
+        socket.emit("waiting-room-update", room_data);
+
+
+
     }) 
+
+    socket.on("join-room", (data, callback) => {
+        let room = Object.values(rooms).find(r => r.code === data.room_code);
+        if (room) {
+            if (room.players.length >= 4) {
+                callback({message:"The room you are trying to join is full."});
+                return;
+            }
+            room.players.push({id: uid, username: data.username});
+            socket.join(room.id);
+            socket.to(room.id).emit("waiting-room-update", room);
+            callback({message:"success"});
+            
+        } else {
+            callback({message:"Your game code is invalid. Please check and try again."})
+        }
+    })
 
 
   });
