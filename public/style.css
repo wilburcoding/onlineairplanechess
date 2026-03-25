@@ -284,7 +284,7 @@ button:disabled {
     margin: 0px 6px;
 }
 
-#cancel-game {
+#cancel-game, #leave-game {
     background-color: #EE6C4D;
 }
 

@@ -179,6 +179,31 @@ window.onload = function () {
     console.log("Received waiting room update:", room_data);
     wroom_data = room_data;
     $("#join-code").text(room_data.code);
+    if (room_data.players.length == 0) {
+      //return to home screen;
+      $("#host-actions-container").hide();
+      $("#non-host-actions-container").hide();
+      $("#ui-layer").show();
+      $("#ui-layer").animate(
+        {
+          opacity: 1,
+        },
+        250,
+      );
+      $("#pixi-overlay").animate(
+        {
+          opacity: 0,
+        },
+        250,
+        function () {
+          $("#pixi-overlay").hide();
+          $("#sidebar-left").show();
+          $("#sidebar-right").show();
+        },
+      );
+
+      return;
+    }
     if (room_data.players[0].id == socket.id) {
       if (room_data.players.length >= 2) {
         $("#start-game").prop("disabled", false);
@@ -225,5 +250,57 @@ window.onload = function () {
         });
       });
     });
+  });
+
+  //leave game -> non-host waiting room
+  $("#leave-game").on("click", function () {
+    socket.emit("leave-room");
+    $("#host-actions-container").hide();
+    $("#non-host-actions-container").hide();
+    $("#ui-layer").show();
+    $("#ui-layer").animate(
+      {
+        opacity: 1,
+      },
+      250,
+    );
+    $("#pixi-overlay").animate(
+      {
+        opacity: 0,
+      },
+      250,
+      function () {
+        $("#pixi-overlay").hide();
+        $("#sidebar-left").show();
+        $("#sidebar-right").show();
+      },
+    );
+  });
+
+  // cancel game -> host only waiting room
+  $("#cancel-game").on("click", function () {
+    socket.emit("leave-room");
+    $("#host-actions-container").hide();
+    $("#non-host-actions-container").hide();
+    $("#ui-layer").show();
+    $("#ui-layer").animate(
+      {
+        opacity: 1,
+      },
+      250,
+      function () {
+        $("#pixi-overlay").animate(
+          {
+            opacity: 0,
+          },
+          250,
+          function () {
+            $("#pixi-overlay").hide();
+            $("#sidebar-left").show();
+            $("#sidebar-right").show();
+          },
+        );
+      },
+    );
   });
 };
