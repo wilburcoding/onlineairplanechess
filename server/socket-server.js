@@ -65,7 +65,9 @@ export const initSocket = (httpServer) => {
             }
             room.players.push({id: uid, username: data.username});
             socket.join(room.id);
-            socket.to(room.id).emit("waiting-room-update", room);
+
+
+            io.to(room.id).emit("waiting-room-update", room);
             callback({message:"success"});
             
         } else {

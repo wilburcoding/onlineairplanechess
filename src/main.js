@@ -94,9 +94,12 @@ window.onload = function () {
   });
 
   // Handling waiting room functionality
+
+  $("#host-actions-container").hide();
+  $("#non-host-actions-container").hide();
+
   // start button -> home screen
   $("#start").on("click", function () {
-    //TODO
     $("#ui-layer").animate(
       {
         opacity: 0,
@@ -111,6 +114,8 @@ window.onload = function () {
     $("#sidebar-left").hide();
     $("#sidebar-right").hide();
     socket.emit("create-room", { username: $("#username").val() });
+    $("#host-actions-container").show();
+    $("#non-host-actions-container").hide();
     $("#pixi-overlay").animate(
       {
         opacity: 1,
@@ -120,6 +125,8 @@ window.onload = function () {
   });
 
   // join button -> home screen
+
+  let wroom_data = null;
   $("#join-button").on("click", function () {
     if ($("#joincode").val().length === 6) {
       socket.emit(
@@ -129,13 +136,23 @@ window.onload = function () {
           room_code: $("#joincode").val(),
         },
         (callback) => {
-          console.log(callback);
           if (callback.message == "success") {
             // successfully joined room
             console.log("Successfully joined room");
+            $("#ui-layer").animate(
+              {
+                opacity: 0,
+              },
+              250,
+              function () {
+                $("#ui-layer").hide();
+              },
+            );
             $("#pixi-overlay").css("opacity", 0);
             $("#pixi-overlay").show();
             $("#sidebar-left").hide();
+            $("#jcontainer").hide();
+
             $("#sidebar-right").hide();
             $("#pixi-overlay").animate(
               {
@@ -143,6 +160,8 @@ window.onload = function () {
               },
               250,
             );
+            $("#host-actions-container").hide();
+            $("#non-host-actions-container").show();
           } else {
             $("#message").text(callback.message);
             $("#message").show();
@@ -155,9 +174,18 @@ window.onload = function () {
     }
   });
 
+  // listening for waiting room updates
   socket.on("waiting-room-update", (room_data) => {
     console.log("Received waiting room update:", room_data);
+    wroom_data = room_data;
     $("#join-code").text(room_data.code);
+    if (room_data.players[0].id == socket.id) {
+      if (room_data.players.length >= 2) {
+        $("#start-game").prop("disabled", false);
+      } else {
+        $("#start-game").prop("disabled", true);
+      }
+    }
     for (let i = 0; i < 4; i++) {
       if (room_data.players[i]) {
         $("#w-p" + (i + 1) + "-card").removeClass("user-waiting");
@@ -165,7 +193,7 @@ window.onload = function () {
         $("#w-p" + (i + 1) + "-status").html(
           `<i class="fa-solid fa-check"></i>`,
         );
-        console.log(room_data.players[i].username);
+
         $("#w-p" + (i + 1) + "-name").text(room_data.players[i].username);
       } else {
         $("#w-p" + (i + 1) + "-card").removeClass("user-ready");
@@ -176,5 +204,26 @@ window.onload = function () {
         $("#w-p" + (i + 1) + "-name").text("Waiting...");
       }
     }
+  });
+
+  //copy code
+  $("#copy-code").on("click", function () {
+    const code = wroom_data.code;
+    navigator.clipboard.writeText(code).then(() => {
+      console.log("room code copied to clipboard");
+      $(this).animate({ opacity: 0 }, 250, function () {
+        $(this).removeClass("fa-copy");
+        $(this).addClass("fa-check");
+        $(this).animate({ opacity: 1 }, 250, function () {
+          setTimeout(() => {
+            $(this).animate({ opacity: 0 }, 250, function () {
+              $(this).removeClass("fa-check");
+              $(this).addClass("fa-copy");
+              $(this).animate({ opacity: 1 }, 250);
+            });
+          }, 1000);
+        });
+      });
+    });
   });
 };
