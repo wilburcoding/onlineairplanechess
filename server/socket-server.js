@@ -96,6 +96,18 @@ export const initSocket = (httpServer) => {
         });
       }
     });
+
+    socket.on("start-game", () => {
+      let room = Object.values(rooms).find((r) => r.players.some((p) => p.id === uid));
+      if (room) {
+        if (room.players[0].id === uid) {
+          room.state = "active-game";
+          room.turn = 0;
+          io.to(room.id).emit("game-start", room);
+
+        }
+      }
+    })
   });
 
   return io;

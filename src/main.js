@@ -237,13 +237,13 @@ window.onload = function () {
     navigator.clipboard.writeText(code).then(() => {
       console.log("room code copied to clipboard");
       $(this).animate({ opacity: 0 }, 250, function () {
-        $(this).removeClass("fa-copy");
-        $(this).addClass("fa-check");
+        $(this).removeClass("ph-copy");
+        $(this).addClass("ph-check");
         $(this).animate({ opacity: 1 }, 250, function () {
           setTimeout(() => {
             $(this).animate({ opacity: 0 }, 250, function () {
-              $(this).removeClass("fa-check");
-              $(this).addClass("fa-copy");
+              $(this).removeClass("ph-check");
+              $(this).addClass("ph-copy");
               $(this).animate({ opacity: 1 }, 250);
             });
           }, 1000);
@@ -303,4 +303,17 @@ window.onload = function () {
       },
     );
   });
+
+  // start game -> host only waiting room
+  $("#start-game").on("click", function() {
+    socket.emit("start-game");
+  })
+
+  // game start listener
+  socket.on("game-start", (room_data) => {
+    $("#waiting-room").hide();
+    $("#sidebar-left").show();
+    $("#sidebar-right").show();
+
+  })
 };

@@ -10,14 +10,18 @@
  - [ ] Use Socket.io for multiplayer functions? -> Need to use separate API
    - [ ] Implement server-side -> need to fix CORS issue
      - [ ] Connect and disconnect
-     - [ ] Handle rooms logic
-     - [ ] Handle waiting room logic
+     - [ ] Handle rooms logic   
+       - [ ] Start game logic
+     - [x] Handle waiting room logic
      - [ ] Handle user disconnecting (from game & lobby)
    - [ ] Implement client-side
      - [ ] Handle rooms logic
-     - [ ] Handle waiting in room logic
+       - [ ] Start game logic
+     - [x] Handle waiting in room logic
      - [ ] More TBD
  - [ ] Design and implement in-game UI
+   - [ ] Figure out how to make the interactive board :(
+   - [ ] Sidebar design?
  - [ ] In game chat?
  - [x] Figure out theme
    - [x] Minimliast game theme? 
@@ -31,6 +35,18 @@ Theme colors:
    - Blue: Dusty Sky (#4e7dba)
    - Green: Sage Leaf (#8FB9A8)
    - Yellow: Muted Mustard (#F4D35E)
+
+In-game UI design:
+ - Left sidebar
+   - Show list of pieces and their location (grid layout?)
+   - Player list?
+ - Right sidebar
+   - Banner showing whose turn it is
+   - Dice roll (with animation? -> sticking to blur to fade in)
+     - 3D dice -> possible feature project
+   - Move history?
+   - Game rules somwhere? (low priority)
+   - Turn countdown? (possible later feature)
 
 Game FLow
  - Presses start button
