@@ -15,16 +15,38 @@
       src="https://kit.fontawesome.com/3f34c302de.js"
       crossorigin="anonymous"
     ></script>
-    <script src="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/index.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/phosphor-icons@1.4.2/src/css/icons.min.css">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
+    />
     <title>Online Airplane Chess</title>
   </head>
 
   <body>
     <div id="app">
       <div id="pixi-container"></div>
-      <div id="pixi-overlay" style="pointer-events: none">
-        <div id="sidebar-left" style="left: 0" class="sidebar"></div>
+      <!-- <div id="pixi-overlay" style="pointer-events: none">
+        <div id="sidebar-left" style="left: 0" class="sidebar">
+          <p style="font-size: 30px; margin-top: 0px; margin-bottom: 5px">
+            Players List
+          </p>
+          <div class="players-list-container"></div>
+          <hr
+            style="
+              margin-top: 15px;
+              margin-bottom: 10px;
+              border: solid 1px #000;
+              width: 100%;
+            "
+          />
+          <p style="font-size: 30px; margin-top: 0px">Your Pieces</p>
+        </div>
         <div id="sidebar-right" style="right: 0" class="sidebar">
           <div id="dice-container">
             <p
@@ -66,7 +88,7 @@
                 <p>Player 1 moved their piece 5 spaces!</p>
               </div>
               <div class="move-history-item">
-                <div class="player-icon red">
+                <div class="player-icon green">
                   <i class="ph ph-trophy"></i>
                 </div>
                 <p>Player 3's piece completed its journey!</p>
@@ -177,7 +199,7 @@
           <button id="join">Join a Game</button>
         </div>
       </div>
-    </div>
+    </div> -->
     <script
       src="https://code.jquery.com/jquery-4.0.0.min.js"
       integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao="

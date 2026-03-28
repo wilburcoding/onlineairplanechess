@@ -11,17 +11,17 @@
    - [ ] Implement server-side -> need to fix CORS issue
      - [ ] Connect and disconnect
      - [ ] Handle rooms logic   
-       - [ ] Start game logic
+       - [x] Start game logic
      - [x] Handle waiting room logic
      - [ ] Handle user disconnecting (from game & lobby)
    - [ ] Implement client-side
      - [ ] Handle rooms logic
-       - [ ] Start game logic
+       - [x] Start game logic
      - [x] Handle waiting in room logic
      - [ ] More TBD
  - [ ] Design and implement in-game UI
    - [ ] Figure out how to make the interactive board :(
-   - [ ] Sidebar design?
+   - [x] Sidebar design?
  - [ ] In game chat?
  - [x] Figure out theme
    - [x] Minimliast game theme? 
@@ -89,3 +89,5 @@ Room Logic
    - Game completed
      - Emit to all users
      - Show results and return to home screen
+
+Apparently negative is up and left and positive is down and right (with center being 0,0) for PIXI.js
