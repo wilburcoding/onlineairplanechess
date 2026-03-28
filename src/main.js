@@ -17,33 +17,73 @@ socket.on("connect", () => {
   console.log("Connected to server with ID:", socket.id);
 });
 
-function create_rect1(rect, i, coord) {
+const COLORS = ["green", "red", "yellow", "blue"];
+const COLOR_HEX = [0xfb9a8, 0xee6c4d, 0xf4d35e, 0x4e7dba];
+
+function create_rect1(i, coord, viewport, color) {
+  const rect = new Graphics();
+  const circle = new Graphics();
   // vertical rectangle
   if (i == 0) {
     rect.rect(coord[0], coord[1], 200, 300);
+    circle.circle(coord[0] + 100, coord[1] + 150, 50)
   } else if (i == 1) {
     rect.rect(coord[0] - 300, coord[1], 300, 200);
+    circle.circle(coord[0] - 150, coord[1] + 100, 50)
   } else if (i == 2) {
     rect.rect(coord[0] - 200, coord[1] - 300, 200, 300);
+    circle.circle(coord[0] - 100, coord[1] - 150, 50);
   } else {
     rect.rect(coord[0], coord[1] - 200, 300, 200);
+    circle.circle(coord[0] + 150, coord[1] - 100, 50);
   }
+  circle.fill({ color: 0xffffff}).stroke({color: 0x000000, width:4});
+  rect.fill({ color: color});
+
+  viewport.addChild(rect);
+  viewport.addChild(circle);
 }
 
-function create_rect2(rect, i, coord) {
+function create_rect2(i, coord, viewport, color) {
+  const rect = new Graphics();
+  const circle = new Graphics();
+
   // horizontal rectangle
   if (i == 0) {
     rect.rect(coord[0], coord[1], 300, 200);
+    circle.circle(coord[0] + 150, coord[1] + 100, 50);
   } else if (i == 1) {
     rect.rect(coord[0] - 200, coord[1], 200, 300);
+    circle.circle(coord[0] - 100, coord[1] + 150, 50);
   } else if (i == 2) {
     rect.rect(coord[0] - 300, coord[1] - 200, 300, 200);
+    circle.circle(coord[0] - 150, coord[1] - 100, 50);
   } else {
     rect.rect(coord[0], coord[1] - 300, 200, 300);
+    circle.circle(coord[0] + 100, coord[1] - 150, 50);
   }
+  rect.fill({ color: color });
+  circle.fill({ color: 0xffffff }).stroke({ color: 0x000000, width: 4 });
+  viewport.addChild(rect);
+  viewport.addChild(circle);
 }
 
-function create_tri(tri, i, coord) {
+
+function incenter(coord1, coord2, coord3) {
+  const a = Math.hypot(coord2[0] - coord3[0], coord2[1] - coord3[1]);
+  const b = Math.hypot(coord1[0] - coord3[0], coord1[1] - coord3[1]);
+  const c = Math.hypot(coord1[0] - coord2[0], coord1[1] - coord2[1]);
+  const ix = (a * coord1[0] + b * coord2[0] + c * coord3[0]) / (a + b + c);
+  const iy = (a * coord1[1] + b * coord2[1] + c * coord3[1]) / (a + b + c);
+  return [ix, iy]
+
+  // thanks gemini for the formula i never seen before in my life
+
+}
+function create_tri(i, coord, viewport, color) {
+  const tri = new Graphics();
+  const circle = new Graphics();
+  //use incenter to place the circle in triangle
   if (i == 0) {
     tri.poly(
       [
@@ -56,6 +96,8 @@ function create_tri(tri, i, coord) {
       ],
       true,
     );
+    const incenter_coord = incenter(coord, [coord[0], coord[1] + 300], [coord[0] + 300, coord[1] + 300]);
+    circle.circle(incenter_coord[0], incenter_coord[1], 50);
   } else if (i == 1) {
     tri.poly(
       [
@@ -68,6 +110,8 @@ function create_tri(tri, i, coord) {
       ],
       true,
     );
+    const incenter_coord = incenter(coord, [coord[0] - 300, coord[1]], [coord[0] - 300, coord[1] + 300]);
+    circle.circle(incenter_coord[0], incenter_coord[1], 50);
   } else if (i == 2) {
     tri.poly(
       [
@@ -80,6 +124,8 @@ function create_tri(tri, i, coord) {
       ],
       true,
     );
+    const incenter_coord = incenter(coord, [coord[0], coord[1] - 300], [coord[0] - 300, coord[1] - 300]);
+    circle.circle(incenter_coord[0], incenter_coord[1], 50);
   } else {
     tri.poly(
       [
@@ -92,11 +138,17 @@ function create_tri(tri, i, coord) {
       ],
       true,
     );
+    const incenter_coord = incenter(coord, [coord[0] + 300, coord[1]], [coord[0] + 300, coord[1] - 300]);
+    circle.circle(incenter_coord[0], incenter_coord[1], 50);
   }
+  tri.fill({ color: color });
+  circle.fill({ color: 0xffffff }).stroke({ color: 0x000000, width: 4 });
+
+  viewport.addChild(tri);
+  viewport.addChild(circle);
+  
 }
 async function init() {
-  const COLORS = ["green", "red", "yellow", "blue"];
-  const COLOR_HEX = [0xfb9a8, 0xee6c4d, 0xf4d35e, 0x4e7dba];
   // Create a new application
   const app = new Application();
 
@@ -174,6 +226,11 @@ async function init() {
   for (let i = 0; i < 4; i++) {
     // yellow
     let orig_coord = [0, -150];
+    for (let j =0; j < i; j++) {
+      orig_coord = [-orig_coord[1], orig_coord[0]];
+    }
+
+    
     for (let j = 0; j < 7; j++) {
       const circle = new Graphics();
       circle
@@ -181,9 +238,19 @@ async function init() {
         .fill({ color: 0xffffff })
         .stroke({ color: 0x000000, width: 4 });
       viewport.addChild(circle);
-      orig_coord[1] -= 200;
+      if (i == 0) {
+        orig_coord[1] -= 200;
+      } else if (i == 1){
+        orig_coord[0] += 200;
+      } else if (i == 2) {
+        orig_coord[1] += 200;
+      } else {
+        orig_coord[0] -= 200;
+      }
     }
+
   }
+
   // const newrect = new Graphics(); //debugging to make sure i got my sizing right
   // newrect.rect(-300, -1500, 200, 300).fill({ color: 0xff0000 });
   // viewport.addChild(newrect);
@@ -198,49 +265,35 @@ async function init() {
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    const r1 = new Graphics();
-    create_rect1(r1, i, coord);
-    r1.fill({ color: COLOR_HEX[(i + 3) % 4] });
-    viewport.addChild(r1);
+    create_rect1(i, coord,viewport, COLOR_HEX[(i + 3) % 4]);
 
     coord = [300, -1500];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    const r2 = new Graphics();
-    create_rect1(r2, i, coord);
-    r2.fill({ color: COLOR_HEX[(i + 4) % 4] });
-    viewport.addChild(r2);
+    create_rect1(i, coord, viewport, COLOR_HEX[(i + 4) % 4]);
 
     //first triangle corner
     coord = [500, -1500];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    const t1 = new Graphics();
-    create_tri(t1, i, coord);
-    t1.fill({ color: COLOR_HEX[(i + 5) % 4] });
-    viewport.addChild(t1);
+
+    create_tri(i, coord, viewport, COLOR_HEX[(i + 5) % 4]);
 
     // first horizontal rectangle column
     coord = [500, -1200];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    const r3 = new Graphics();
-    create_rect2(r3, i, coord);
-    r3.fill({ color: COLOR_HEX[(i + 6) % 4] });
-    viewport.addChild(r3);
+    create_rect2(i, coord, viewport, COLOR_HEX[(i + 6) % 4]);
 
     coord = [500, -1000];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
 
-    const r4 = new Graphics();
-    create_rect2(r4, i, coord);
-    r4.fill({ color: COLOR_HEX[(i + 7) % 4] });
-    viewport.addChild(r4);
+    create_rect2(i, coord, viewport, COLOR_HEX[(i + 7) % 4]);
 
     // second triangle corner -> its a double
     coord = [800, -800];
@@ -248,47 +301,33 @@ async function init() {
       coord = [-coord[1], coord[0]];
     }
 
-    const t2 = new Graphics();
-    create_tri(t2, (i + 1) % 4, coord);
-    t2.fill({ color: COLOR_HEX[(i + 8) % 4] });
-    viewport.addChild(t2);
+    create_tri((i + 1) % 4, coord, viewport, COLOR_HEX[(i + 8) % 4]);
 
     coord = [500, -500];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    create_tri(t2, (i + 3) % 4, coord);
-    t2.fill({ color: COLOR_HEX[(i + 9) % 4] });
-    viewport.addChild(t2);
+    create_tri((i + 3) % 4, coord, viewport, COLOR_HEX[(i + 9) % 4]);
 
     // second vertical rectangle row
     coord = [800, -800];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    const r5 = new Graphics();
-    create_rect1(r5, i, coord);
-    r5.fill({ color: COLOR_HEX[(i + 10) % 4] });
-    viewport.addChild(r5);
+    create_rect1(i, coord, viewport, COLOR_HEX[(i + 10) % 4]);
 
     coord = [1000, -800];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    const r6 = new Graphics();
-    create_rect1(r6, i, coord);
-    r6.fill({ color: COLOR_HEX[(i + 11) % 4] });
-    viewport.addChild(r6);
+    create_rect1(i, coord, viewport, COLOR_HEX[(i + 11) % 4]);
 
     // final triangle corner
     coord = [1200, -800];
-    for (let j =0; j < i; j++) {
+    for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    const t3 = new Graphics();
-    create_tri(t3, i, coord);
-    t3.fill({ color: COLOR_HEX[(i + 12) % 4]});
-    viewport.addChild(t3);
+    create_tri(i, coord, viewport, COLOR_HEX[(i + 12) % 4]);
 
     // final horizontal rectangle column
     coord = [1200, -500];
@@ -296,19 +335,17 @@ async function init() {
       coord = [-coord[1], coord[0]];
     }
 
-    const r7 = new Graphics();
-    create_rect2(r7, i, coord);
-    r7.fill({ color: COLOR_HEX[(i + 13) % 4] });
-    viewport.addChild(r7);
+    create_rect2(i, coord, viewport, COLOR_HEX[(i + 13) % 4]);
 
     coord = [1200, -300];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    const r8 = new Graphics();
-    create_rect2(r8, i, coord);
-    r8.fill({ color: COLOR_HEX[(i + 14) % 4]});
-    viewport.addChild(r8);
+    create_rect2(i, coord, viewport, COLOR_HEX[(i + 14) % 4]);
+
+    // TODO: Clean up to make this more efficient bcs tf is this bro -> done
+    // TODO: Add circles
+    
   }
 
   app.stage.addChild(viewport);

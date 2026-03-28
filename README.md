@@ -20,7 +20,7 @@
      - [x] Handle waiting in room logic
      - [ ] More TBD
  - [ ] Design and implement in-game UI
-   - [ ] Figure out how to make the interactive board :(
+   - [x] Figure out how to make the interactive board :(
    - [x] Sidebar design?
  - [ ] In game chat?
  - [x] Figure out theme
