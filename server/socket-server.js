@@ -61,9 +61,9 @@ export const initSocket = (httpServer) => {
           // is host
           room.players = [];
           io.to(room.id).emit("waiting-room-update", room);
-          socket.leave(room.id)
+          socket.leave(room.id);
           if (room.players.length == 0) {
-            delete rooms[room.id]
+            delete rooms[room.id];
           }
         } else {
           room.players = room.players.filter((p) => p.id !== uid);
@@ -73,7 +73,6 @@ export const initSocket = (httpServer) => {
             delete rooms[room.id];
           }
         }
-
       }
       console.log(rooms);
     });
@@ -98,16 +97,30 @@ export const initSocket = (httpServer) => {
     });
 
     socket.on("start-game", () => {
-      let room = Object.values(rooms).find((r) => r.players.some((p) => p.id === uid));
+      let room = Object.values(rooms).find((r) =>
+        r.players.some((p) => p.id === uid),
+      );
+      const COLORS = ["green", "red", "yellow", "blue"];
       if (room) {
         if (room.players[0].id === uid) {
           room.state = "active-game";
           room.turn = 0;
+          for (let i = 0; i < room.players.length; i++) {
+            room.players[i].color = COLORS[i];
+            room.players[i].pieces = [];
+            for (let j = 0; j < 4; j++) {
+              room.players[i].pieces.push({
+                status: "home",
+                location:
+                  room.players[i].color.substring(0, 1).toUpperCase() + "-" + j,
+              });
+            }
+          }
           io.to(room.id).emit("game-start", room);
-
         }
+        io.to(room.id).emit("game-update", room);
       }
-    })
+    });
   });
 
   return io;

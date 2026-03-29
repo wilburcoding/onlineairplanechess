@@ -253,6 +253,22 @@ button:disabled {
   z-index: 500;
 }
 
+#turn-status-container {
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items:center;
+    background-color: #bbccf2;
+    color:black;
+    padding:4px 7px;
+    border-radius:5px;
+    margin:0px; 
+}
+
+#turn-status-container p {
+    margin:0;
+    font-size:15px;
+}
 .user-ready .user-status {
   background-color: #8fb9a8;
 }

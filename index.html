@@ -31,7 +31,7 @@
   <body>
     <div id="app">
       <div id="pixi-container"></div>
-      <!-- <div id="pixi-overlay" style="pointer-events: none">
+      <div id="pixi-overlay" style="pointer-events: none">
         <div id="sidebar-left" style="left: 0" class="sidebar">
           <p style="font-size: 30px; margin-top: 0px; margin-bottom: 5px">
             Players List
@@ -49,11 +49,15 @@
         </div>
         <div id="sidebar-right" style="right: 0" class="sidebar">
           <div id="dice-container">
+            <div id="turn-status-container">
+              <p id="turn-status">Your Turn</p>
+            </div>
             <p
               style="
                 color: black;
                 font-size: 25px;
                 margin-bottom: 20px;
+                margin-top:0px;
                 font-weight: 500;
               "
             >
@@ -62,7 +66,7 @@
             <div id="dice">
               <p id="dice-result">5</p>
             </div>
-            <button id="roll-dice">Roll Dice</button>
+            <button id="roll-dice" disabled>Roll Dice</button>
           </div>
           <hr
             style="
@@ -199,7 +203,7 @@
           <button id="join">Join a Game</button>
         </div>
       </div>
-    </div> -->
+    </div>
     <script
       src="https://code.jquery.com/jquery-4.0.0.min.js"
       integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao="

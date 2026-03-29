@@ -89,6 +89,8 @@ function incenter(coord1, coord2, coord3) {
   // thanks gemini for the formula i never seen before in my life
 }
 
+let viewport = null;
+let app = null;
 function create_rect3(i, coord, viewport, color, prefix) {
   const rect = new Graphics();
   let circles = [];
@@ -222,7 +224,7 @@ function create_tri(i, coord, viewport, color, type = "normal", tag) {
 }
 async function init() {
   // Create a new application
-  const app = new Application();
+  app = new Application();
 
   // Initialize the application
   await app.init({ background: "#dce4f5", resizeTo: window });
@@ -231,7 +233,7 @@ async function init() {
   document.getElementById("pixi-container").appendChild(app.canvas);
 
   // create viewport
-  const viewport = new Viewport({
+  viewport = new Viewport({
     screenWidth: window.innerWidth,
     screenHeight: window.innerHeight,
     worldWidth: 1000,
@@ -356,7 +358,6 @@ async function init() {
       }
     }
   }
-
   // const newrect = new Graphics(); //debugging to make sure i got my sizing right
   // newrect.rect(-300, -1500, 200, 300).fill({ color: 0xff0000 });
   // viewport.addChild(newrect);
@@ -525,8 +526,8 @@ async function init() {
   });
   for (let key of Object.keys(COORDS)) {
     const text = new Text({ text: key, style: style });
-    text.x = COORDS[key][0] -35;
-    text.y = COORDS[key][1] -25;
+    text.x = COORDS[key][0] - 35;
+    text.y = COORDS[key][1] - 25;
     viewport.addChild(text);
   }
 
@@ -535,6 +536,7 @@ async function init() {
 
   viewport.moveCenter(0, 0);
 }
+let dice_roll = null;
 
 window.onload = function () {
   // Hnalding home screen functionality
@@ -809,14 +811,72 @@ window.onload = function () {
   $("#start-game").on("click", function () {
     socket.emit("start-game");
   });
-
+  let player_sprites = [];
   // game start listener
   socket.on("game-start", (room_data) => {
     $("#waiting-room").hide();
     $("#sidebar-left").show();
     $("#sidebar-right").show();
+    viewport.animate({
+      scaleX: 0.25,
+      scaleY: 0.25,
+      time: 1000,
+    });
+    // create sprites
+
+    for (let i = 0; i < room_data.players.length; i++) {
+      let player = [];
+      for (let j = 0; j < 4; j++) {
+        const graphic = new Graphics();
+        const coord = COORDS[`${COLORS[i].substring(0, 1).toUpperCase()}-${j}`];
+        graphic.circle(0, 0, 45).fill({ color: COLOR_HEX[i] });
+        const texture = app.renderer.generateTexture(graphic);
+        const sprite = new Sprite(texture);
+        sprite.position.set(coord[0] - 45, coord[1] - 45);
+        viewport.addChild(sprite);
+        player.push(sprite);
+      }
+      player_sprites.push(player);
+    }
   });
 
+  // next move game listener
+  socket.on("game-update", (game_data) => {
+    // check if move is for current player
+    if (game_data.players[game_data.turn].id == socket.id) {
+      $("#roll-dice").prop("disabled", false);
+      $("#turn-status").text("Your Turn");
+    } else {
+      $("#roll-dice").prop("disabled", true);
+      $("#turn-status").html(
+        "Waiting on <strong>" +
+          game_data.players[game_data.turn].username +
+          "</strong>",
+      );
+    }
+
+    // update player information
+
+    for (let i = 0; i < 4; i++) {
+      if (game_data.players[i]) {
+        $("#p" + (i + 1) + "-name").text(game_data.players[i].username);
+        if (game_data.players[i].id == socket.id) {
+          $("#p" + (i + 1) + "-card").css("background-color", "#98b0e4");
+        }
+      } else {
+        $("#p" + (i + 1) + "-card").hide();
+      }
+    }
+  });
+
+  //handle dice roll
+  $("#roll-dice").on("click", function () {
+    dice_roll = Math.floor(Math.random() * 6) + 1;
+    $("#dice-result").css("opacity", 0);
+    $("#dice-result").text(dice_roll);
+    $("#dice-result").animate({ opacity: 1 }, 250);
+    $(this).prop("disabled", true);
+  });
   // dynamically create sidebar UI
   const COLORS = ["green", "red", "yellow", "blue"];
   const COLOR_HEX = ["#8FB9A8", "#EE6C4D", "#F4D35E", "#4e7dba"];
