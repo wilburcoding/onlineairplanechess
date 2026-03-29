@@ -5,6 +5,8 @@ import {
   Texture,
   Polygon,
   Graphics,
+  Text,
+  TextStyle,
 } from "pixi.js";
 import { Viewport } from "pixi-viewport";
 import { io } from "socket.io-client";
@@ -19,32 +21,36 @@ socket.on("connect", () => {
 
 const COLORS = ["green", "red", "yellow", "blue"];
 const COLOR_HEX = [0xfb9a8, 0xee6c4d, 0xf4d35e, 0x4e7dba];
-
-function create_rect1(i, coord, viewport, color) {
+const COORDS = {}; // keep track of coords for specific location to make it easy to use in the future
+function create_rect1(i, coord, viewport, color, tag) {
   const rect = new Graphics();
   const circle = new Graphics();
   // vertical rectangle
   if (i == 0) {
     rect.rect(coord[0], coord[1], 200, 300);
-    circle.circle(coord[0] + 100, coord[1] + 150, 50)
+    circle.circle(coord[0] + 100, coord[1] + 150, 50);
+    COORDS[tag] = [coord[0] + 100, coord[1] + 150];
   } else if (i == 1) {
     rect.rect(coord[0] - 300, coord[1], 300, 200);
-    circle.circle(coord[0] - 150, coord[1] + 100, 50)
+    circle.circle(coord[0] - 150, coord[1] + 100, 50);
+    COORDS[tag] = [coord[0] - 150, coord[1] + 100];
   } else if (i == 2) {
     rect.rect(coord[0] - 200, coord[1] - 300, 200, 300);
     circle.circle(coord[0] - 100, coord[1] - 150, 50);
+    COORDS[tag] = [coord[0] - 100, coord[1] - 150];
   } else {
     rect.rect(coord[0], coord[1] - 200, 300, 200);
     circle.circle(coord[0] + 150, coord[1] - 100, 50);
+    COORDS[tag] = [coord[0] + 150, coord[1] - 100];
   }
-  circle.fill({ color: 0xffffff}).stroke({color: 0x000000, width:4});
-  rect.fill({ color: color});
+  circle.fill({ color: 0xffffff }).stroke({ color: 0x000000, width: 4 });
+  rect.fill({ color: color });
 
   viewport.addChild(rect);
   viewport.addChild(circle);
 }
 
-function create_rect2(i, coord, viewport, color) {
+function create_rect2(i, coord, viewport, color, tag) {
   const rect = new Graphics();
   const circle = new Graphics();
 
@@ -52,15 +58,19 @@ function create_rect2(i, coord, viewport, color) {
   if (i == 0) {
     rect.rect(coord[0], coord[1], 300, 200);
     circle.circle(coord[0] + 150, coord[1] + 100, 50);
+    COORDS[tag] = [coord[0] + 150, coord[1] + 100];
   } else if (i == 1) {
     rect.rect(coord[0] - 200, coord[1], 200, 300);
     circle.circle(coord[0] - 100, coord[1] + 150, 50);
+    COORDS[tag] = [coord[0] - 100, coord[1] + 150];
   } else if (i == 2) {
     rect.rect(coord[0] - 300, coord[1] - 200, 300, 200);
     circle.circle(coord[0] - 150, coord[1] - 100, 50);
+    COORDS[tag] = [coord[0] - 150, coord[1] - 100];
   } else {
     rect.rect(coord[0], coord[1] - 300, 200, 300);
     circle.circle(coord[0] + 100, coord[1] - 150, 50);
+    COORDS[tag] = [coord[0] + 100, coord[1] - 150];
   }
   rect.fill({ color: color });
   circle.fill({ color: 0xffffff }).stroke({ color: 0x000000, width: 4 });
@@ -68,22 +78,63 @@ function create_rect2(i, coord, viewport, color) {
   viewport.addChild(circle);
 }
 
-
 function incenter(coord1, coord2, coord3) {
   const a = Math.hypot(coord2[0] - coord3[0], coord2[1] - coord3[1]);
   const b = Math.hypot(coord1[0] - coord3[0], coord1[1] - coord3[1]);
   const c = Math.hypot(coord1[0] - coord2[0], coord1[1] - coord2[1]);
   const ix = (a * coord1[0] + b * coord2[0] + c * coord3[0]) / (a + b + c);
   const iy = (a * coord1[1] + b * coord2[1] + c * coord3[1]) / (a + b + c);
-  return [ix, iy]
+  return [ix, iy];
 
   // thanks gemini for the formula i never seen before in my life
-
 }
-function create_tri(i, coord, viewport, color) {
+
+function create_rect3(i, coord, viewport, color, prefix) {
+  const rect = new Graphics();
+  let circles = [];
+  let circles_start = [];
+  if (i == 0) {
+    rect.rect(coord[0], coord[1], 700, 700);
+    circles_start = [coord[0] + 150, coord[1] + 150];
+  } else if (i == 1) {
+    rect.rect(coord[0] - 700, coord[1], 700, 700);
+    circles_start = [coord[0] - 550, coord[1] + 150];
+  } else if (i == 2) {
+    rect.rect(coord[0] - 700, coord[1] - 700, 700, 700);
+    circles_start = [coord[0] - 550, coord[1] - 550];
+  } else {
+    rect.rect(coord[0], coord[1] - 700, 700, 700);
+    circles_start = [coord[0] + 150, coord[1] - 550];
+  }
+
+  rect.fill({ color: color }).stroke({ color: 0x000000, width: 8 });
+
+  viewport.addChild(rect);
+  for (let j = 0; j < 2; j++) {
+    for (let k = 0; k < 2; k++) {
+      const circle = new Graphics();
+      circle
+        .circle(
+          circles_start[0] + 50 + j * 300,
+          circles_start[1] + 50 + k * 300,
+          50,
+        )
+        .fill({ color: 0xffffff })
+        .stroke({ color: 0x000000, width: 4 });
+      circles.push(circle);
+      viewport.addChild(circle);
+      COORDS[`${prefix}-${j * 2 + k}`] = [
+        circles_start[0] + 50 + j * 300,
+        circles_start[1] + 50 + k * 300,
+      ];
+    }
+  }
+}
+function create_tri(i, coord, viewport, color, type = "normal", tag) {
   const tri = new Graphics();
   const circle = new Graphics();
   //use incenter to place the circle in triangle
+  let incenter_coord = [];
   if (i == 0) {
     tri.poly(
       [
@@ -96,7 +147,11 @@ function create_tri(i, coord, viewport, color) {
       ],
       true,
     );
-    const incenter_coord = incenter(coord, [coord[0], coord[1] + 300], [coord[0] + 300, coord[1] + 300]);
+    incenter_coord = incenter(
+      coord,
+      [coord[0], coord[1] + 300],
+      [coord[0] + 300, coord[1] + 300],
+    );
     circle.circle(incenter_coord[0], incenter_coord[1], 50);
   } else if (i == 1) {
     tri.poly(
@@ -110,7 +165,11 @@ function create_tri(i, coord, viewport, color) {
       ],
       true,
     );
-    const incenter_coord = incenter(coord, [coord[0] - 300, coord[1]], [coord[0] - 300, coord[1] + 300]);
+    incenter_coord = incenter(
+      coord,
+      [coord[0] - 300, coord[1]],
+      [coord[0] - 300, coord[1] + 300],
+    );
     circle.circle(incenter_coord[0], incenter_coord[1], 50);
   } else if (i == 2) {
     tri.poly(
@@ -124,7 +183,11 @@ function create_tri(i, coord, viewport, color) {
       ],
       true,
     );
-    const incenter_coord = incenter(coord, [coord[0], coord[1] - 300], [coord[0] - 300, coord[1] - 300]);
+    incenter_coord = incenter(
+      coord,
+      [coord[0], coord[1] - 300],
+      [coord[0] - 300, coord[1] - 300],
+    );
     circle.circle(incenter_coord[0], incenter_coord[1], 50);
   } else {
     tri.poly(
@@ -138,15 +201,24 @@ function create_tri(i, coord, viewport, color) {
       ],
       true,
     );
-    const incenter_coord = incenter(coord, [coord[0] + 300, coord[1]], [coord[0] + 300, coord[1] - 300]);
+    incenter_coord = incenter(
+      coord,
+      [coord[0] + 300, coord[1]],
+      [coord[0] + 300, coord[1] - 300],
+    );
     circle.circle(incenter_coord[0], incenter_coord[1], 50);
   }
-  tri.fill({ color: color });
+  if (type == "normal") {
+    tri.fill({ color: color });
+    COORDS[tag] = [incenter_coord[0], incenter_coord[1]];
+  } else {
+    tri.fill({ color: color }).stroke({ color: 0x000000, width: 8 });
+    COORDS[`${tag}-exit`] = [incenter_coord[0], incenter_coord[1]];
+  }
   circle.fill({ color: 0xffffff }).stroke({ color: 0x000000, width: 4 });
 
   viewport.addChild(tri);
   viewport.addChild(circle);
-  
 }
 async function init() {
   // Create a new application
@@ -191,6 +263,35 @@ async function init() {
     [-100, -1500, 200, 1300],
     [200, -100, 1300, 200],
   ];
+  // draw shortcut lines
+  const SHORTCUT_POINTS = [
+    [715, 715],
+    [-715, 715],
+    [-715, -715],
+    [715, -715],
+  ];
+  for (let i = 0; i < 4; i++) {
+    const coord1 = [SHORTCUT_POINTS[i][0], SHORTCUT_POINTS[i][1]];
+    const coord2 = [
+      SHORTCUT_POINTS[(i + 1) % 4][0],
+      SHORTCUT_POINTS[(i + 1) % 4][1],
+    ];
+    let ccoord = [coord1[0], coord1[1]];
+    for (let j = 0; j < 22; j++) {
+      const line = new Graphics();
+      line.moveTo(ccoord[0], ccoord[1]);
+      ccoord[0] += (coord2[0] - coord1[0]) / 22;
+      ccoord[1] += (coord2[1] - coord1[1]) / 22;
+      line.lineTo(ccoord[0], ccoord[1]);
+      line.stroke({ width: 10, color: COLOR_HEX[(i + 2) % 4] });
+
+      if (j % 2 == 0) {
+        viewport.addChild(line);
+      }
+    }
+  }
+
+  // draw center base path
   for (let i = 0; i < 4; i++) {
     const triangle = new Graphics();
     console.log(COLOR_HEX[i]);
@@ -226,11 +327,11 @@ async function init() {
   for (let i = 0; i < 4; i++) {
     // yellow
     let orig_coord = [0, -150];
-    for (let j =0; j < i; j++) {
+    for (let j = 0; j < i; j++) {
       orig_coord = [-orig_coord[1], orig_coord[0]];
     }
+    // hangar path circles
 
-    
     for (let j = 0; j < 7; j++) {
       const circle = new Graphics();
       circle
@@ -238,9 +339,15 @@ async function init() {
         .fill({ color: 0xffffff })
         .stroke({ color: 0x000000, width: 4 });
       viewport.addChild(circle);
+      if (j != 6) {
+        COORDS[
+          COLORS[(i + 2) % 4].substring(0, 1).toUpperCase() + "H-" + (6 - j)
+        ] = [orig_coord[0], orig_coord[1]];
+      }
+
       if (i == 0) {
         orig_coord[1] -= 200;
-      } else if (i == 1){
+      } else if (i == 1) {
         orig_coord[0] += 200;
       } else if (i == 2) {
         orig_coord[1] += 200;
@@ -248,7 +355,6 @@ async function init() {
         orig_coord[0] -= 200;
       }
     }
-
   }
 
   // const newrect = new Graphics(); //debugging to make sure i got my sizing right
@@ -259,19 +365,20 @@ async function init() {
   // tile dimenstions are 200 x 300 and circles have radius 50
 
   // the rest of the game board
+  let count = 1;
   for (let i = 0; i < 4; i++) {
     //start with yellow because its easiest lol
     let coord = [100, -1500];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    create_rect1(i, coord,viewport, COLOR_HEX[(i + 3) % 4]);
+    create_rect1(i, coord, viewport, COLOR_HEX[(i + 3) % 4], "M-" + count++);
 
     coord = [300, -1500];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    create_rect1(i, coord, viewport, COLOR_HEX[(i + 4) % 4]);
+    create_rect1(i, coord, viewport, COLOR_HEX[(i + 4) % 4], "M-" + count++);
 
     //first triangle corner
     coord = [500, -1500];
@@ -279,21 +386,28 @@ async function init() {
       coord = [-coord[1], coord[0]];
     }
 
-    create_tri(i, coord, viewport, COLOR_HEX[(i + 5) % 4]);
+    create_tri(
+      i,
+      coord,
+      viewport,
+      COLOR_HEX[(i + 5) % 4],
+      "normal",
+      "M-" + count++,
+    );
 
     // first horizontal rectangle column
     coord = [500, -1200];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    create_rect2(i, coord, viewport, COLOR_HEX[(i + 6) % 4]);
+    create_rect2(i, coord, viewport, COLOR_HEX[(i + 6) % 4], "M-" + count++);
 
     coord = [500, -1000];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
 
-    create_rect2(i, coord, viewport, COLOR_HEX[(i + 7) % 4]);
+    create_rect2(i, coord, viewport, COLOR_HEX[(i + 7) % 4], "M-" + count++);
 
     // second triangle corner -> its a double
     coord = [800, -800];
@@ -301,33 +415,54 @@ async function init() {
       coord = [-coord[1], coord[0]];
     }
 
-    create_tri((i + 1) % 4, coord, viewport, COLOR_HEX[(i + 8) % 4]);
+    create_tri(
+      (i + 1) % 4,
+      coord,
+      viewport,
+      COLOR_HEX[(i + 8) % 4],
+      "normal",
+      "M-" + count++,
+    );
 
     coord = [500, -500];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    create_tri((i + 3) % 4, coord, viewport, COLOR_HEX[(i + 9) % 4]);
+    create_tri(
+      (i + 3) % 4,
+      coord,
+      viewport,
+      COLOR_HEX[(i + 9) % 4],
+      "normal",
+      "M-" + count++,
+    );
 
     // second vertical rectangle row
     coord = [800, -800];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    create_rect1(i, coord, viewport, COLOR_HEX[(i + 10) % 4]);
+    create_rect1(i, coord, viewport, COLOR_HEX[(i + 10) % 4], "M-" + count++);
 
     coord = [1000, -800];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    create_rect1(i, coord, viewport, COLOR_HEX[(i + 11) % 4]);
+    create_rect1(i, coord, viewport, COLOR_HEX[(i + 11) % 4], "M-" + count++);
 
     // final triangle corner
     coord = [1200, -800];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    create_tri(i, coord, viewport, COLOR_HEX[(i + 12) % 4]);
+    create_tri(
+      i,
+      coord,
+      viewport,
+      COLOR_HEX[(i + 12) % 4],
+      "normal",
+      "M-" + count++,
+    );
 
     // final horizontal rectangle column
     coord = [1200, -500];
@@ -335,17 +470,64 @@ async function init() {
       coord = [-coord[1], coord[0]];
     }
 
-    create_rect2(i, coord, viewport, COLOR_HEX[(i + 13) % 4]);
+    create_rect2(i, coord, viewport, COLOR_HEX[(i + 13) % 4], "M-" + count++);
 
     coord = [1200, -300];
     for (let j = 0; j < i; j++) {
       coord = [-coord[1], coord[0]];
     }
-    create_rect2(i, coord, viewport, COLOR_HEX[(i + 14) % 4]);
+    create_rect2(i, coord, viewport, COLOR_HEX[(i + 14) % 4], "M-" + count++);
 
+    // add bases
+    coord = [800, -1500];
+    for (let j = 0; j < i; j++) {
+      coord = [-coord[1], coord[0]];
+    }
+    create_rect3(
+      i,
+      coord,
+      viewport,
+      COLOR_HEX[(i + 14) % 4],
+      COLORS[(i + 2) % 4].substring(0, 1).toUpperCase(),
+    );
+
+    // base launch areas
+    coord = [800, -1200];
+    for (let j = 0; j < i; j++) {
+      coord = [-coord[1], coord[0]];
+    }
+    create_tri(
+      (i + 2) % 4,
+      coord,
+      viewport,
+      COLOR_HEX[(i + 14) % 4],
+      "base",
+      COLORS[(i + 2) % 4].substring(0, 1).toUpperCase(),
+    );
+
+    const mid_coord = [
+      i % 2 == 0 ? 1350 * (i - 1) * -1 : 0,
+      i % 2 == 0 ? 0 : 1350 * (i - 2) * -1,
+    ];
+    COORDS["M-" + count++] = mid_coord;
     // TODO: Clean up to make this more efficient bcs tf is this bro -> done
     // TODO: Add circles
-    
+  }
+  console.log(COORDS);
+
+  //debugging coords
+  const style = new TextStyle({
+    fontFamily: "Arial",
+    fontSize: 36,
+    fill: "0x000000",
+    wordWrap: true,
+    wordWrapWidth: 400,
+  });
+  for (let key of Object.keys(COORDS)) {
+    const text = new Text({ text: key, style: style });
+    text.x = COORDS[key][0] -35;
+    text.y = COORDS[key][1] -25;
+    viewport.addChild(text);
   }
 
   app.stage.addChild(viewport);
