@@ -95,12 +95,12 @@ export const initSocket = (httpServer) => {
         });
       }
     });
-
+    const COLORS = ["green", "red", "yellow", "blue"];
     socket.on("start-game", () => {
       let room = Object.values(rooms).find((r) =>
         r.players.some((p) => p.id === uid),
       );
-      const COLORS = ["green", "red", "yellow", "blue"];
+
       if (room) {
         if (room.players[0].id === uid) {
           room.state = "active-game";
@@ -120,6 +120,74 @@ export const initSocket = (httpServer) => {
         }
         io.to(room.id).emit("game-update", room);
       }
+    });
+
+    // move piece event -> calculate new position and update game
+    socket.on("move-piece", (data) => {
+      let room = Object.values(rooms).find((r) =>
+        r.players.some((p) => p.id === uid),
+      );
+
+      let player_index = data.player;
+      let piece_index = data.piece;
+      let dice_roll = data.roll;
+      console.log(data);
+      console.log(room.players[player_index]);
+      if (room.players[player_index].pieces[piece_index].status === "home") {
+        room.players[player_index].pieces[piece_index].status = "active";
+        room.players[player_index].pieces[piece_index].location =
+          COLORS[player_index].substring(0, 1).toUpperCase() + "-exit";
+
+        room.turn = (room.turn + 1) % room.players.length;
+        io.to(room.id).emit("game-update", room);
+      } else if (
+        room.players[player_index].pieces[piece_index].status === "active"
+      ) {
+        // two types of locations: main path and hangar path;
+        let loc_type =
+          room.players[player_index].pieces[piece_index].location.split("-")[0];
+        let loc_num =
+          room.players[player_index].pieces[piece_index].location.split("-")[1];
+        if (loc_num == "exit") {
+          // checks: landing on teams pieces, same color
+          console.log([2, 15, 28, 41][player_index]);
+          console.log(dice_roll)
+          loc_type = "M";
+          loc_num = [28, 41, 2, 15][player_index] + dice_roll;
+          console.log(loc_num)
+
+          for (let i = 0; i < room.players.length; i++) {
+            for (let j = 0; j < room.players[i].pieces.length; j++) {
+              if (
+                room.players[i].pieces[j].location ==
+                loc_type + "-" + loc_num
+              ) {
+                // capture piece
+                room.players[i].pieces[j].status = "home";
+                room.players[i].pieces[j].location = room.players[i].color.substring(0, 1).toUpperCase() + "-" + j;
+              }
+            }
+          }
+
+          if (loc_num % 4 == [2, 1, 0, 3][player_index]) {
+            //landing on same color -> go ahead 4 spaces and check if
+            loc_num += 4;
+          }
+          room.players[player_index].pieces[piece_index].location = loc_type + "-" + loc_num;
+          room.turn = (room.turn + 1) % room.players.length;
+          io.to(room.id).emit("game-update", room);
+
+        } else {
+          loc_num += dice_roll;
+          //checks: same color, flying shortcut, landing on other teams pieces, entering hangar path, finish path
+          if (loc_type == "M") {
+            // currently on main path ->
+          } else if (loc_type.includes("H")) {
+            // hangar path
+          }
+        }
+      }
+      console.log(room.players[player_index]);
     });
   });
 

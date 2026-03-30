@@ -263,11 +263,12 @@ button:disabled {
     padding:4px 7px;
     border-radius:5px;
     margin:0px; 
+    margin-bottom:5px;
 }
 
 #turn-status-container p {
     margin:0;
-    font-size:15px;
+    font-size:20px;
 }
 .user-ready .user-status {
   background-color: #8fb9a8;

@@ -812,8 +812,10 @@ window.onload = function () {
     socket.emit("start-game");
   });
   let player_sprites = [];
+  let game_data = null;
   // game start listener
   socket.on("game-start", (room_data) => {
+    game_data = room_data;
     $("#waiting-room").hide();
     $("#sidebar-left").show();
     $("#sidebar-right").show();
@@ -835,14 +837,34 @@ window.onload = function () {
         sprite.position.set(coord[0] - 45, coord[1] - 45);
         viewport.addChild(sprite);
         player.push(sprite);
+        sprite.eventMode = "static";
+        sprite.on("click", () => {
+          console.log(game_data);
+          console.log(game_data.turn)
+          if (game_data.players[game_data.turn].id == socket.id && $("#roll-dice").prop("disabled") == true && game_data.players[i].id == socket.id) {
+            // make sure its the right players turn and they have rolled the dice and they are clicking on their own piece
+            if (game_data.players[i].pieces[j].status == "home") { // need a six to get out
+              if (dice_roll == 6) {
+                socket.emit("move-piece", { piece: j, player: i, roll: dice_roll});
+              }
+            } else {
+              socket.emit("move-piece", {piece: j, player: i, roll:dice_roll})
+            }
+          }
+        })
       }
       player_sprites.push(player);
     }
   });
 
   // next move game listener
-  socket.on("game-update", (game_data) => {
+  socket.on("game-update", (room_data) => {
+    game_data = room_data;
     // check if move is for current player
+    $("#turn-status-container").css(
+      "background-color",
+      COLOR_HEX[game_data.turn],  
+    );
     if (game_data.players[game_data.turn].id == socket.id) {
       $("#roll-dice").prop("disabled", false);
       $("#turn-status").text("Your Turn");
@@ -861,10 +883,21 @@ window.onload = function () {
       if (game_data.players[i]) {
         $("#p" + (i + 1) + "-name").text(game_data.players[i].username);
         if (game_data.players[i].id == socket.id) {
-          $("#p" + (i + 1) + "-card").css("background-color", "#98b0e4");
+          $("#p" + (i + 1) + "-name").text(
+            game_data.players[i].username + " (You)",
+          );
         }
       } else {
         $("#p" + (i + 1) + "-card").hide();
+      }
+    }
+
+    //update pieces 
+    for (let i = 0; i < game_data.players.length ; i++) {
+      for (let j = 0; j < game_data.players[i].pieces.length; j++) {
+        const piece = game_data.players[i].pieces[j];
+        const sprite = player_sprites[i][j];
+        sprite.position.set(COORDS[piece.location][0] - 45, COORDS[piece.location][1] - 45);
       }
     }
   });
@@ -872,6 +905,7 @@ window.onload = function () {
   //handle dice roll
   $("#roll-dice").on("click", function () {
     dice_roll = Math.floor(Math.random() * 6) + 1;
+    dice_roll = 6; // debugging purposes
     $("#dice-result").css("opacity", 0);
     $("#dice-result").text(dice_roll);
     $("#dice-result").animate({ opacity: 1 }, 250);
@@ -887,7 +921,7 @@ window.onload = function () {
           <div class="user-icon">
             <i class="ph ph-user"></i>
           </div>
-          <p id="p${i}-name">Player ${i}</p>
+          <p id="p${i}-name" style="text-align:center">Player ${i}</p>
         </div>
         <div class="player-piece-container" id="p${i}-piece-container"></div>
       </div>`);
