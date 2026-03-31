@@ -6,7 +6,7 @@
 
 ## TODO
  - [x] Figure out how to zoom and scroll animations
- - [ ] Figure out how Pixi.js works 
+ - [x] Figure out how Pixi.js works 
  - [ ] Use Socket.io for multiplayer functions? -> Need to use separate API
    - [ ] Implement server-side -> need to fix CORS issue
      - [ ] Connect and disconnect

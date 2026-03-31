@@ -151,10 +151,10 @@ export const initSocket = (httpServer) => {
         if (loc_num == "exit") {
           // checks: landing on teams pieces, same color
           console.log([2, 15, 28, 41][player_index]);
-          console.log(dice_roll)
+          console.log(dice_roll);
           loc_type = "M";
           loc_num = [28, 41, 2, 15][player_index] + dice_roll;
-          console.log(loc_num)
+          console.log(loc_num);
 
           for (let i = 0; i < room.players.length; i++) {
             for (let j = 0; j < room.players[i].pieces.length; j++) {
@@ -164,24 +164,84 @@ export const initSocket = (httpServer) => {
               ) {
                 // capture piece
                 room.players[i].pieces[j].status = "home";
-                room.players[i].pieces[j].location = room.players[i].color.substring(0, 1).toUpperCase() + "-" + j;
+                room.players[i].pieces[j].location =
+                  room.players[i].color.substring(0, 1).toUpperCase() + "-" + j;
               }
             }
           }
 
-          if (loc_num % 4 == [2, 1, 0, 3][player_index]) {
+          if (loc_num % 4 == [2, 3, 0, 1][player_index]) {
             //landing on same color -> go ahead 4 spaces and check if
             loc_num += 4;
           }
-          room.players[player_index].pieces[piece_index].location = loc_type + "-" + loc_num;
+          room.players[player_index].pieces[piece_index].location =
+            loc_type + "-" + loc_num;
           room.turn = (room.turn + 1) % room.players.length;
           io.to(room.id).emit("game-update", room);
-
         } else {
           loc_num += dice_roll;
           //checks: same color, flying shortcut, landing on other teams pieces, entering hangar path, finish path
           if (loc_type == "M") {
+            console.log("Main path")
             // currently on main path ->
+            if (loc_num >= 52) {
+              loc_type = "H";
+              loc_num = loc_num % 52;
+              // hangar path -> nothing else to check
+            } else {
+              // check capture piece
+              for (let i = 0; i < room.players.length; i++) {
+                for (let j = 0; j < room.players[i].pieces.length; j++) {
+                  if (
+                    room.players[i].pieces[j].location ==
+                    loc_type + "-" + loc_num
+                  ) {
+                    room.players[i].pieces[j].status = "home";
+                    room.players[i].pieces[j].location =
+                      room.players[i].color.substring(0, 1).toUpperCase() +
+                      "-" +
+                      j;
+                  }
+                }
+              }
+
+              // same color shortcut OR flying shortcut
+              if ([7, 20, 33, 46][player_index] == loc_num) {
+                loc_num += 12;
+              } else if (loc_num % 4 == [2, 3, 0, 1][player_index]) {
+                //landing on same color -> go ahead 4 spaces and check if
+                loc_num += 4;
+              }
+
+              // check everything again now that at new spot
+              // check capture piece
+              for (let i = 0; i < room.players.length; i++) {
+                for (let j = 0; j < room.players[i].pieces.length; j++) {
+                  if (
+                    room.players[i].pieces[j].location ==
+                    loc_type + "-" + loc_num
+                  ) {
+                    room.players[i].pieces[j].status = "home";
+                    room.players[i].pieces[j].location =
+                      room.players[i].color.substring(0, 1).toUpperCase() +
+                      "-" +
+                      j;
+                  }
+                }
+              }
+
+              // same color shortcut OR flying shortcut
+              if ([7, 20, 33, 46][player_index] == loc_num) {
+                loc_num += 12;
+              } else if (loc_num % 4 == [2, 3, 0, 1][player_index]) {
+                //landing on same color -> go ahead 4 spaces and check if
+                loc_num += 4;
+              }
+            }
+            room.players[player_index].pieces[piece_index].location = loc_type + "-" + loc_num;
+
+            room.turn = (room.turn + 1) % room.players.length;
+            io.to(room.id).emit("game-update", room);
           } else if (loc_type.includes("H")) {
             // hangar path
           }
