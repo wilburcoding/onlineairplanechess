@@ -24,10 +24,11 @@
    - [x] Sidebar design?
  - [ ] In-game functionality (not sure why I wasn't tracking this before lol)
    - [ ] Piece Movement
-     - [ ] Checking for jumps -> same color and flying
+     - [x] Checking for jumps -> same color and flying
      - [ ] Capturing pieces for all movements
      - [ ] Hangar movement 
      - [ ] Piece journey completion
+     - [x] Extra turn if you roll a 6
    - [x] Skip turn
    - [ ] Add changes to move history  
    - [ ] 

@@ -123,7 +123,6 @@ export const initSocket = (httpServer) => {
       }
     });
 
-
     //skip turn
     socket.on("skip-turn", () => {
       let room = Object.values(rooms).find((r) =>
@@ -138,9 +137,7 @@ export const initSocket = (httpServer) => {
       });
       room.turn = (room.turn + 1) % room.players.length;
       io.to(room.id).emit("game-update", room);
-
-
-    })
+    });
     // move piece event -> calculate new position and update game
     socket.on("move-piece", (data) => {
       let room = Object.values(rooms).find((r) =>
@@ -157,12 +154,19 @@ export const initSocket = (httpServer) => {
         room.players[player_index].pieces[piece_index].location =
           COLORS[player_index].substring(0, 1).toUpperCase() + "-exit";
 
-        room.turn = (room.turn + 1) % room.players.length;
+        // room.turn = (room.turn + 1) % room.players.length; -> removing from home is always a 6 so player gets another turn
         room.history.push({
           text:
             room.players[player_index].username +
             "'s piece is now ready to move",
           type: "activate",
+          color: player_index,
+        });
+        room.history.push({
+          text:
+            room.players[player_index].username +
+            " rolled a 6 and gets another turn",
+          type: "repeat",
           color: player_index,
         });
         io.to(room.id).emit("game-update", room);
@@ -174,20 +178,21 @@ export const initSocket = (httpServer) => {
           room.players[player_index].pieces[piece_index].location.split("-")[0];
         let loc_num =
           room.players[player_index].pieces[piece_index].location.split("-")[1];
-        const prev_num = loc_num;
+        let prev_num = loc_num;
+        if (prev_num == "exit") {
+          prev_num = [28, 41, 2, 15][player_index];
+        }
         if (loc_num == "exit") {
           // checks: landing on teams pieces, same color
-          console.log([2, 15, 28, 41][player_index]);
-          console.log(dice_roll);
           loc_type = "M";
           loc_num = [28, 41, 2, 15][player_index] + dice_roll;
-          console.log(loc_num);
 
           for (let i = 0; i < room.players.length; i++) {
             for (let j = 0; j < room.players[i].pieces.length; j++) {
               if (
                 room.players[i].pieces[j].location ==
-                loc_type + "-" + loc_num
+                  loc_type + "-" + loc_num &&
+                j != piece_index
               ) {
                 // capture piece
                 room.players[i].pieces[j].status = "home";
@@ -203,7 +208,8 @@ export const initSocket = (httpServer) => {
           }
           room.players[player_index].pieces[piece_index].location =
             loc_type + "-" + loc_num;
-          room.turn = (room.turn + 1) % room.players.length;
+
+          console.log(loc_num, ",", prev_num);
           room.history.push({
             text:
               room.players[player_index].username +
@@ -213,6 +219,18 @@ export const initSocket = (httpServer) => {
             type: "move",
             color: player_index,
           });
+          if (dice_roll != 6) {
+            room.turn = (room.turn + 1) % room.players.length;
+          } else {
+            room.history.push({
+              text:
+                room.players[player_index].username +
+                " rolled a 6 and gets another turn",
+              type: "repeat",
+              color: player_index,
+            });
+          }
+
           io.to(room.id).emit("game-update", room);
         } else {
           loc_num = parseInt(loc_num);
@@ -228,7 +246,8 @@ export const initSocket = (httpServer) => {
               prev_num <= EXIT_LOCATIONS[player_index]
             ) {
               loc_type =
-                room.players[i].color.substring(0, 1).toUpperCase() + "H";
+                room.players[player_index].color.substring(0, 1).toUpperCase() +
+                "H";
               loc_num = loc_num % EXIT_LOCATIONS[player_index];
               // hangar path -> nothing else to check
               room.history.push({
@@ -247,7 +266,8 @@ export const initSocket = (httpServer) => {
                 for (let j = 0; j < room.players[i].pieces.length; j++) {
                   if (
                     room.players[i].pieces[j].location ==
-                    loc_type + "-" + loc_num
+                      loc_type + "-" + loc_num &&
+                    j != piece_index
                   ) {
                     room.players[i].pieces[j].status = "home";
                     room.players[i].pieces[j].location =
@@ -266,13 +286,14 @@ export const initSocket = (httpServer) => {
                   }
                 }
               }
-
+              let jumped = false;
               // same color shortcut OR flying shortcut
-              if ([7, 20, 33, 46][player_index] == loc_num) {
+              if ([46, 7, 20, 33][player_index] == loc_num) {
                 loc_num += 12;
               } else if (loc_num % 4 == [2, 3, 0, 1][player_index]) {
                 //landing on same color -> go ahead 4 spaces and check if
                 loc_num += 4;
+                jumped = true;
               }
               if (loc_num > 52) {
                 loc_num = loc_num % 52;
@@ -284,7 +305,7 @@ export const initSocket = (httpServer) => {
                 for (let j = 0; j < room.players[i].pieces.length; j++) {
                   if (
                     room.players[i].pieces[j].location ==
-                    loc_type + "-" + loc_num
+                    loc_type + "-" + loc_num && j != piece_index
                   ) {
                     room.players[i].pieces[j].status = "home";
                     room.players[i].pieces[j].location =
@@ -303,14 +324,40 @@ export const initSocket = (httpServer) => {
                   }
                 }
               }
+
+              if (jumped) {
+                if ([46, 7, 20, 33][player_index] == loc_num) {
+                  loc_num += 12;
+                }
+
+                // check capture piece
+                for (let i = 0; i < room.players.length; i++) {
+                  for (let j = 0; j < room.players[i].pieces.length; j++) {
+                    if (
+                      room.players[i].pieces[j].location ==
+                      loc_type + "-" + loc_num && j != piece_index
+                    ) {
+                      room.players[i].pieces[j].status = "home";
+                      room.players[i].pieces[j].location =
+                        room.players[i].color.substring(0, 1).toUpperCase() +
+                        "-" +
+                        j;
+                      room.history.push({
+                        text:
+                          room.players[player_index].username +
+                          "'s piece has captured " +
+                          room.players[i].username +
+                          "'s piece",
+                        type: "capture",
+                        color: player_index,
+                      });
+                    }
+                  }
+                }
+              }
             }
             room.players[player_index].pieces[piece_index].location =
               loc_type + "-" + loc_num;
-
-            room.turn = (room.turn + 1) % room.players.length;
-            console.log("prev num and new loc");
-            console.log(loc_num);
-            console.log(prev_num);
             room.history.push({
               text:
                 room.players[player_index].username +
@@ -320,6 +367,21 @@ export const initSocket = (httpServer) => {
               type: "move",
               color: player_index,
             });
+            if (dice_roll != 6) {
+              room.turn = (room.turn + 1) % room.players.length;
+            } else {
+              room.history.push({
+                text:
+                  room.players[player_index].username +
+                  " rolled a 6 and gets another turn",
+                type: "repeat",
+                color: player_index,
+              });
+            }
+
+            console.log("prev num and new loc");
+            console.log(loc_num);
+            console.log(prev_num);
             io.to(room.id).emit("game-update", room);
           } else if (loc_type.includes("H")) {
             // hangar path

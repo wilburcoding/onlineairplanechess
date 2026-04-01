@@ -888,6 +888,8 @@ window.onload = function () {
           icon = `<i class="ph ph-rocket-launch"></i>`;
         } else if (game_data.history[i].type == "skip") {
           icon = "<i class='ph ph-skip-forward'></i>";
+        } else if (game_data.history[i].type == "repeat") {
+          icon = "<i class='ph ph-repeat'></i>";
         }
         $("#move-history").append(
           `<div class="move-history-item">
