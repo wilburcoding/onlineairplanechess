@@ -890,6 +890,8 @@ window.onload = function () {
           icon = "<i class='ph ph-skip-forward'></i>";
         } else if (game_data.history[i].type == "repeat") {
           icon = "<i class='ph ph-repeat'></i>";
+        } else if (game_data.history[i].type == "win") {
+          icon = "<i class='ph ph-trophy'></i>";
         }
         $("#move-history").append(
           `<div class="move-history-item">
