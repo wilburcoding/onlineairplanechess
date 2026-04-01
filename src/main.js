@@ -296,8 +296,6 @@ async function init() {
   // draw center base path
   for (let i = 0; i < 4; i++) {
     const triangle = new Graphics();
-    console.log(COLOR_HEX[i]);
-    console.log(CENTER_TRI_POINTS[i], CENTER_TRI_POINTS[i + 1]);
     triangle
       .poly(
         [
@@ -514,8 +512,6 @@ async function init() {
     // TODO: Clean up to make this more efficient bcs tf is this bro -> done
     // TODO: Add circles
   }
-  console.log(COORDS);
-
   //debugging coords
   const style = new TextStyle({
     fontFamily: "Arial",
@@ -876,6 +872,33 @@ window.onload = function () {
           "</strong>",
       );
     }
+    //update move history log UI
+    if ($("#move-history").children().length < game_data.history.length) {
+      console.log(game_data.history);
+      for (
+        let i = $("#move-history").children().length ;
+        i < game_data.history.length;
+        i++
+      ) {
+        console.log(game_data.history[i]);
+        let icon = `<i class="ph ph-sword"></i>`;
+        if (game_data.history[i].type == "move") {
+          icon = `<i class="ph ph-paper-plane"></i>`;
+        } else if (game_data.history[i].type == "activate") {
+          icon = `<i class="ph ph-rocket-launch"></i>`;
+        } else if (game_data.history[i].type == "skip") {
+          icon = "<i class='ph ph-skip-forward'></i>";
+        }
+        $("#move-history").append(
+          `<div class="move-history-item">
+                <div class="player-icon ${COLORS[game_data.history[i].color]}">
+                  ${icon}
+                </div>
+                <p>${game_data.history[i].text}</p>
+          </div>`,
+        );
+      }
+    }
 
     // update player information
 
@@ -905,11 +928,23 @@ window.onload = function () {
   //handle dice roll
   $("#roll-dice").on("click", function () {
     dice_roll = Math.floor(Math.random() * 6) + 1;
-    dice_roll = 6; // debugging purposes
+    // dice_roll = 6; // debugging purposes
     $("#dice-result").css("opacity", 0);
     $("#dice-result").text(dice_roll);
     $("#dice-result").animate({ opacity: 1 }, 250);
-    $(this).prop("disabled", true);
+    $(this).prop("disabled", true); 
+
+    // check for no possible moves and skip turn if necessary
+    let possible_move = false;
+    for (let i = 0; i < game_data.players[game_data.turn].pieces.length; i++) {
+      if (game_data.players[game_data.turn].pieces[i].status != "home") {
+        possible_move = true;
+      } 
+    }
+
+    if (possible_move == false && dice_roll != 6) {
+      socket.emit("skip-turn");
+    } 
   });
   // dynamically create sidebar UI
   const COLORS = ["green", "red", "yellow", "blue"];

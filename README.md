@@ -22,9 +22,24 @@
  - [ ] Design and implement in-game UI
    - [x] Figure out how to make the interactive board :(
    - [x] Sidebar design?
+ - [ ] In-game functionality (not sure why I wasn't tracking this before lol)
+   - [ ] Piece Movement
+     - [ ] Checking for jumps -> same color and flying
+     - [ ] Capturing pieces for all movements
+     - [ ] Hangar movement 
+     - [ ] Piece journey completion
+   - [x] Skip turn
+   - [ ] Add changes to move history  
+   - [ ] 
  - [ ] In game chat?
  - [x] Figure out theme
    - [x] Minimliast game theme? 
+ - [ ] Possible additions:
+   - [ ] User account functionality
+   - [ ] Dark mode :)
+   - [ ] Dice animation
+   - [ ] Public game finding?
+   - [ ] Piece movement animation
 
 ## Notes
 
