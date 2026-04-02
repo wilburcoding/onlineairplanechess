@@ -25,16 +25,16 @@ function generate_room_code() {
 
 function check_win(io, room) {
   let finished_count = 0;
-  for (let i =0; i < room.players.length;i++) {
+  for (let i = 0; i < room.players.length; i++) {
     let player_finished = true;
-    for (let j =0; j < room.players[i].pieces.length;j++) {
+    for (let j = 0; j < room.players[i].pieces.length; j++) {
       if (room.players[i].pieces[j].status != "finished") {
         player_finished = false;
         break;
       }
-    } 
+    }
     if (player_finished) {
-      finished_count +=1;
+      finished_count += 1;
     }
   }
 
@@ -43,7 +43,6 @@ function check_win(io, room) {
   } else {
     io.to(room.id).emit("game-update", room);
   }
-
 }
 
 export const initSocket = (httpServer) => {
@@ -131,9 +130,14 @@ export const initSocket = (httpServer) => {
           for (let i = 0; i < room.players.length; i++) {
             room.players[i].color = COLORS[i];
             room.players[i].pieces = [];
+            room.players[i].stats = {
+              jumps: 0,
+              sixs: 0,
+              captures: 0,
+            };
             for (let j = 0; j < 4; j++) {
               room.players[i].pieces.push({
-                status: i < 3 ? "finished" : "home", // debugging only
+                status: j < 3 ? "finished" : "home", // debugging only
                 location:
                   room.players[i].color.substring(0, 1).toUpperCase() + "-" + j,
               });
@@ -158,6 +162,7 @@ export const initSocket = (httpServer) => {
         color: room.turn,
       });
       room.turn = (room.turn + 1) % room.players.length;
+      // dosen't add turn
       io.to(room.id).emit("game-update", room);
     });
     // move piece event -> calculate new position and update game
@@ -165,10 +170,13 @@ export const initSocket = (httpServer) => {
       let room = Object.values(rooms).find((r) =>
         r.players.some((p) => p.id === uid),
       );
-      console.log("---------------------------------");
       let player_index = data.player;
       let piece_index = data.piece;
       let dice_roll = data.roll;
+      if (dice_roll == 6) {
+        room.players[player_index].stats.sixs += 1;
+      }
+
       if (room.players[player_index].pieces[piece_index].status === "home") {
         room.players[player_index].pieces[piece_index].status = "active";
         room.players[player_index].pieces[piece_index].location =
@@ -216,8 +224,18 @@ export const initSocket = (httpServer) => {
               ) {
                 // capture piece
                 room.players[i].pieces[j].status = "home";
+                room.players[player_index].stats.captures += 1;
                 room.players[i].pieces[j].location =
                   room.players[i].color.substring(0, 1).toUpperCase() + "-" + j;
+                room.history.push({
+                  text:
+                    room.players[player_index].username +
+                    "'s piece has captured " +
+                    room.players[i].username +
+                    "'s piece",
+                  type: "capture",
+                  color: player_index,
+                });
               }
             }
           }
@@ -225,6 +243,7 @@ export const initSocket = (httpServer) => {
           if (loc_num % 4 == [2, 3, 0, 1][player_index]) {
             //landing on same color -> go ahead 4 spaces and check if
             loc_num += 4;
+            room.players[player_index].stats.jumps += 1;
           }
           room.players[player_index].pieces[piece_index].location =
             loc_type + "-" + loc_num;
@@ -246,6 +265,7 @@ export const initSocket = (httpServer) => {
           if (dice_roll != 6) {
             room.turn = (room.turn + 1) % room.players.length;
           } else {
+
             room.history.push({
               text:
                 room.players[player_index].username +
@@ -311,6 +331,7 @@ export const initSocket = (httpServer) => {
                       loc_type + "-" + loc_num &&
                     i != player_index
                   ) {
+                    room.players[player_index].stats.captures +=1;
                     room.players[i].pieces[j].status = "home";
                     room.players[i].pieces[j].location =
                       room.players[i].color.substring(0, 1).toUpperCase() +
@@ -337,10 +358,10 @@ export const initSocket = (httpServer) => {
               } else if (loc_num % 4 == [2, 3, 0, 1][player_index]) {
                 //landing on same color -> go ahead 4 spaces and check if
                 loc_num += 4;
+                room.players[player_index].stats.jumps +=1;
                 jumped = true;
 
                 //check if jumped onto hangar win spot
-
               }
               if (loc_num > 52) {
                 loc_num = loc_num % 52;
@@ -349,7 +370,9 @@ export const initSocket = (httpServer) => {
                 room.players[player_index].pieces[piece_index].status =
                   "finished";
                 room.players[player_index].pieces[piece_index].location =
-                  room.players[player_index].color.substring(0, 1).toUpperCase() +
+                  room.players[player_index].color
+                    .substring(0, 1)
+                    .toUpperCase() +
                   "-" +
                   piece_index;
                 room.history.push({
@@ -373,6 +396,7 @@ export const initSocket = (httpServer) => {
                     i != player_index
                   ) {
                     room.players[i].pieces[j].status = "home";
+                    room.players[player_index].stats.captures +=1;
                     room.players[i].pieces[j].location =
                       room.players[i].color.substring(0, 1).toUpperCase() +
                       "-" +
@@ -398,6 +422,7 @@ export const initSocket = (httpServer) => {
               if (flying) {
                 if (loc_num % 4 == [2, 3, 0, 1][player_index] && !jumped) {
                   loc_num += 4;
+                  room.players[player_index].stats.jumps +=1;
                 }
               }
               if (loc_num > 52) {
@@ -414,6 +439,7 @@ export const initSocket = (httpServer) => {
                       i != player_index
                     ) {
                       room.players[i].pieces[j].status = "home";
+                      room.players[player_index].stats.captures +=1;
                       room.players[i].pieces[j].location =
                         room.players[i].color.substring(0, 1).toUpperCase() +
                         "-" +
@@ -459,13 +485,12 @@ export const initSocket = (httpServer) => {
               });
             }
 
-
             check_win(io, room);
           } else if (loc_type.includes("H")) {
             // hangar path
             if (loc_num > 5) {
-              loc_num = 6 - (loc_num - 6); 
-            };
+              loc_num = 6 - (loc_num - 6);
+            }
             if (loc_num == 6) {
               // finish
               room.players[player_index].pieces[piece_index].status =

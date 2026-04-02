@@ -1066,8 +1066,10 @@ window.onload = function () {
   // handle game end
   socket.on("game-end", (data) => {
     $("#game-results").show();
-    console.log("game-end");
-    
+
+    console.log(data);
+
+
 
   })
 };
