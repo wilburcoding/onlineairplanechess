@@ -23,15 +23,15 @@
    - [x] Figure out how to make the interactive board :(
    - [x] Sidebar design?
  - [ ] In-game functionality (not sure why I wasn't tracking this before lol)
-   - [ ] Piece Movement
+   - [x] Piece Movement
      - [x] Checking for jumps -> same color and flying
-     - [ ] Capturing pieces for all movements
-     - [ ] Hangar movement 
-     - [ ] Piece journey completion
+     - [x] Capturing pieces for all movements
+     - [x] Hangar movement 
+     - [x] Piece journey completion
      - [x] Extra turn if you roll a 6
    - [x] Skip turn
-   - [ ] Add changes to move history  
-   - [ ] 
+   - [x] Add changes to move history  
+   - [x] Visually update based on piece data 
  - [ ] In game chat?
  - [x] Figure out theme
    - [x] Minimliast game theme? 
@@ -44,6 +44,7 @@
  - [ ] Issues
    - [ ] Disappearing piece issue?? idk man
    - [x] Weird piece count when moving past 52
+   - [x] Hangar backwards movement is broken
 
 ## Notes
 

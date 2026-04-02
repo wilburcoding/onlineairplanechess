@@ -267,7 +267,7 @@ export const initSocket = (httpServer) => {
               room.players[player_index].pieces[piece_index].status =
                 "finished";
               room.players[player_index].pieces[piece_index].location =
-                room.players[i].color.substring(0, 1).toUpperCase() +
+                room.players[player_index].color.substring(0, 1).toUpperCase() +
                 "-" +
                 piece_index;
               room.history.push({
@@ -279,6 +279,7 @@ export const initSocket = (httpServer) => {
               });
               room.turn = (room.turn + 1) % room.players.length;
               io.to(room.id).emit("game-update", room);
+              return;
             } else {
               if (loc_num > 52) {
                 loc_num = loc_num % 52;
@@ -318,11 +319,31 @@ export const initSocket = (httpServer) => {
                 //landing on same color -> go ahead 4 spaces and check if
                 loc_num += 4;
                 jumped = true;
+
+                //check if jumped onto hangar win spot
+
               }
               if (loc_num > 52) {
                 loc_num = loc_num % 52;
               }
-
+              if (loc_num == EXIT_LOCATIONS[player_index]) {
+                room.players[player_index].pieces[piece_index].status =
+                  "finished";
+                room.players[player_index].pieces[piece_index].location =
+                  room.players[player_index].color.substring(0, 1).toUpperCase() +
+                  "-" +
+                  piece_index;
+                room.history.push({
+                  type: "win",
+                  text:
+                    room.players[player_index].username +
+                    "'s piece has finished their journey!",
+                  color: player_index,
+                });
+                room.turn = (room.turn + 1) % room.players.length;
+                io.to(room.id).emit("game-update", room);
+                return;
+              }
               // check everything again now that at new spot
               // check capture piece
               for (let i = 0; i < room.players.length; i++) {
@@ -425,13 +446,15 @@ export const initSocket = (httpServer) => {
             io.to(room.id).emit("game-update", room);
           } else if (loc_type.includes("H")) {
             // hangar path
-            loc_num = loc_num % 6;
-            if (loc_num == 0) {
+            if (loc_num > 5) {
+              loc_num = 6 - (loc_num - 6); 
+            };
+            if (loc_num == 6) {
               // finish
               room.players[player_index].pieces[piece_index].status =
                 "finished";
               room.players[player_index].pieces[piece_index].location =
-                room.players[i].color.substring(0, 1).toUpperCase() +
+                room.players[player_index].color.substring(0, 1).toUpperCase() +
                 "-" +
                 piece_index;
               room.history.push({

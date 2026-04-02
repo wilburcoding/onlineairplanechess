@@ -836,18 +836,31 @@ window.onload = function () {
         sprite.eventMode = "static";
         sprite.on("click", () => {
           console.log(game_data);
-          console.log(game_data.turn)
-          if (game_data.players[game_data.turn].id == socket.id && $("#roll-dice").prop("disabled") == true && game_data.players[i].id == socket.id) {
+          console.log(game_data.turn);
+          if (
+            game_data.players[game_data.turn].id == socket.id &&
+            $("#roll-dice").prop("disabled") == true &&
+            game_data.players[i].id == socket.id
+          ) {
             // make sure its the right players turn and they have rolled the dice and they are clicking on their own piece
-            if (game_data.players[i].pieces[j].status == "home") { // need a six to get out
+            if (game_data.players[i].pieces[j].status == "home") {
+              // need a six to get out
               if (dice_roll == 6) {
-                socket.emit("move-piece", { piece: j, player: i, roll: dice_roll});
+                socket.emit("move-piece", {
+                  piece: j,
+                  player: i,
+                  roll: dice_roll,
+                });
               }
             } else {
-              socket.emit("move-piece", {piece: j, player: i, roll:dice_roll})
+              socket.emit("move-piece", {
+                piece: j,
+                player: i,
+                roll: dice_roll,
+              });
             }
           }
-        })
+        });
       }
       player_sprites.push(player);
     }
@@ -859,7 +872,7 @@ window.onload = function () {
     // check if move is for current player
     $("#turn-status-container").css(
       "background-color",
-      COLOR_HEX[game_data.turn],  
+      COLOR_HEX[game_data.turn],
     );
     if (game_data.players[game_data.turn].id == socket.id) {
       $("#roll-dice").prop("disabled", false);
@@ -876,7 +889,7 @@ window.onload = function () {
     if ($("#move-history").children().length < game_data.history.length) {
       console.log(game_data.history);
       for (
-        let i = $("#move-history").children().length ;
+        let i = $("#move-history").children().length;
         i < game_data.history.length;
         i++
       ) {
@@ -893,7 +906,7 @@ window.onload = function () {
         } else if (game_data.history[i].type == "win") {
           icon = "<i class='ph ph-trophy'></i>";
         }
-        $("#move-history").append(
+        $("#move-history").prepend(
           `<div class="move-history-item">
                 <div class="player-icon ${COLORS[game_data.history[i].color]}">
                   ${icon}
@@ -919,12 +932,70 @@ window.onload = function () {
       }
     }
 
-    //update pieces 
-    for (let i = 0; i < game_data.players.length ; i++) {
+    //update pieces
+    for (let i = 0; i < game_data.players.length; i++) {
       for (let j = 0; j < game_data.players[i].pieces.length; j++) {
         const piece = game_data.players[i].pieces[j];
         const sprite = player_sprites[i][j];
-        sprite.position.set(COORDS[piece.location][0] - 45, COORDS[piece.location][1] - 45);
+        sprite.position.set(
+          COORDS[piece.location][0] - 45,
+          COORDS[piece.location][1] - 45,
+        );
+        if (piece.status == "finished") {
+          sprite.visible = false;
+        }
+      
+        // dynamically update ui element
+        if (piece.status == "home") {
+          $(`#p${i + 1}-piece-${j}-status`).html(
+            `<i class="ph ph-warehouse"></i>`,
+          );
+        } else if (piece.location.includes("exit")) {
+          $(`#p${i + 1}-piece-${j}-status`).html(
+            `<i class="ph ph-airplane-taxiing"></i>`,
+          );
+        } else if (piece.location.includes("H")) {
+          $(`#p${i + 1}-piece-${j}-status`).html(
+            `<i class="ph ph-airplane-landing"></i>`,
+          );
+        } else if (piece.status == "active") {
+          $(`#p${i + 1}-piece-${j}-status`).html(
+            `<i class="ph ph-airplane-in-flight"></i>`,
+          );
+        } else {
+          $(`#p${i + 1}-piece-${j}-status`).html(`<i class="ph ph-check"></i>`);
+        }
+        //progress bar
+        const EXIT_LOCATIONS = [26, 39, 52, 13];
+        const START_LOCATIONS = [28, 41, 2, 15];
+        const TOTAL = 57;
+        let progress = 0;
+        if (piece.status == "home") {
+          progress = 0;
+        } else if (piece.status == "finished") {
+          progress = 57;
+        } else if (piece.location.includes("exit")) {
+          progress = 0;
+        } else if (piece.status == "active") {
+          let loc = parseInt(piece.location.split("-")[1]);
+          if (piece.location.includes("H")) {
+            loc = 51 + loc;
+          } else {
+            if (i == 2) {
+              progress = (loc - 1);
+            } else {
+              if (loc > EXIT_LOCATIONS[i]) {
+                progress = (loc - START_LOCATIONS[i]);
+              } else {
+                progress = (52 - START_LOCATIONS[i]) + loc;
+              }
+            }
+          }
+        }
+        console.log(progress)
+        $(`#p${i + 1}-piece-${j}-progress`).css("height", (progress / TOTAL) * 100 + "%");
+        
+
       }
     }
   });
@@ -936,19 +1007,22 @@ window.onload = function () {
     $("#dice-result").css("opacity", 0);
     $("#dice-result").text(dice_roll);
     $("#dice-result").animate({ opacity: 1 }, 250);
-    $(this).prop("disabled", true); 
+    $(this).prop("disabled", true);
 
     // check for no possible moves and skip turn if necessary
     let possible_move = false;
     for (let i = 0; i < game_data.players[game_data.turn].pieces.length; i++) {
-      if (game_data.players[game_data.turn].pieces[i].status != "home") {
+      if (
+        game_data.players[game_data.turn].pieces[i].status != "home" &&
+        game_data.players[game_data.turn].pieces[i].status != "finished"
+      ) {
         possible_move = true;
-      } 
+      }
     }
 
     if (possible_move == false && dice_roll != 6) {
       socket.emit("skip-turn");
-    } 
+    }
   });
   // dynamically create sidebar UI
   const COLORS = ["green", "red", "yellow", "blue"];
