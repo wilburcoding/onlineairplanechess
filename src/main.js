@@ -531,6 +531,8 @@ async function init() {
   viewport.drag().pinch().wheel().decelerate();
 
   viewport.moveCenter(0, 0);
+  viewport.setZoom(0.27);
+  viewport.clampZoom({minScale: 0.15, maxScale: 1});
 }
 let dice_roll = null;
 
@@ -596,7 +598,7 @@ window.onload = function () {
 
   $("#host-actions-container").hide();
   $("#non-host-actions-container").hide();
-  // $("#game-results").hide();
+  $("#game-results").hide();
 
   // start button -> home screen
   $("#start").on("click", function () {
@@ -813,7 +815,7 @@ window.onload = function () {
   // game start listener
   socket.on("game-start", (room_data) => {
     game_data = room_data;
-    $("#waiting-room").hide();
+    $("#waiting-room-container").hide();
     $("#sidebar-left").show();
     $("#sidebar-right").show();
     viewport.animate({
@@ -1110,12 +1112,40 @@ window.onload = function () {
           icon = `<i class="ph ph-warehouse"></i>`;
         } else if (sorted_players[i].pieces[j].status == "active") {
           icon = `<i class="ph ph-airplane-in-flight"></i>`;
-        } 
-        $("#p" + (i) + "-stat-items").append(`
+        }
+        $("#p" + i + "-stat-items").append(`
         <div class="stat-plane ${sorted_players[i].color}" ${style}>
           ${icon}
         </div>`);
       }
     }
+  });
+
+  // return to home screen
+  $("#g-return").on("click", function () {
+    $("#game-results").hide();
+    $("#sidebar-left").hide();
+    $("#sidebar-right").hide();
+    $("#pixi-overlay").animate(
+      {
+        opacity: 0,
+      },
+      250,
+      function () {
+        $("#pixi-overlay").hide();
+        $("#waiting-room-container").show();
+      },
+    );
+    $("#ui-layer").css("opacity", 0);
+    $("#ui-layer").show();
+    $("#ui-layer").animate(
+      {
+        opacity: 1,
+      },
+      250,
+    );
+    viewport.moveCenter(0, 0);
+    viewport.setZoom(0.27);
+
   });
 };

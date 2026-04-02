@@ -64,9 +64,19 @@ button {
   opacity: 0.8;
 }
 
+#waiting-room-container {
+  background-color: rgba(68, 68, 68, 0.405);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 #g-return {
-  width:150px;
-  font-size:25px;
+  width: 150px;
+  font-size: 25px;
 }
 
 button:hover {
@@ -150,7 +160,7 @@ input[type="text"] {
 }
 
 canvas {
-    pointer-events: all;
+  pointer-events: all;
 }
 
 .sidebar {
@@ -259,21 +269,21 @@ button:disabled {
 }
 
 #turn-status-container {
-    display:flex;
-    flex-direction:row;
-    justify-content:center;
-    align-items:center;
-    background-color: #bbccf2;
-    color:black;
-    padding:4px 7px;
-    border-radius:5px;
-    margin:0px; 
-    margin-bottom:5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: #bbccf2;
+  color: black;
+  padding: 4px 7px;
+  border-radius: 5px;
+  margin: 0px;
+  margin-bottom: 5px;
 }
 
 #turn-status-container p {
-    margin:0;
-    font-size:20px;
+  margin: 0;
+  font-size: 20px;
 }
 .user-ready .user-status {
   background-color: #8fb9a8;
@@ -348,23 +358,22 @@ button:disabled {
 }
 
 #move-history-container {
-  display:flex;
-  flex:1;
-  min-height:0;
-  overflow:hidden;
-  width:100%;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
   flex-direction: column;
 }
 #move-history {
-  width:100%;
-  padding:0;
-  margin:0;
-  display:flex;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
   flex-direction: column;
   /* justify-content: flex-end; */
   overflow-y: scroll;
-  height:calc(100%);
-  
+  height: calc(100%);
 }
 
 .move-history-item {
@@ -393,7 +402,6 @@ button:disabled {
   justify-content: center;
 }
 
-
 #copy-code {
   margin-left: 0px !important;
 }
@@ -403,90 +411,84 @@ button:disabled {
 }
 
 #results-container {
-  background-color:white;
-  padding:30px 15px;
-  border-radius:5px;
-  color:black;
-  display:flex;
+  background-color: white;
+  padding: 30px 15px;
+  border-radius: 5px;
+  color: black;
+  display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items:center;
-
-
+  pointer-events: all;
+  align-items: center;
 }
 
 #results-content {
-  display:flex;
-  flex-direction:column;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items:center;
-  width:100%;
-
+  align-items: center;
+  width: 100%;
 }
 
 .rcard-icon {
-  width:80px;
-  height:80px;
-  border-radius:50%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
   background-color: white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:50px;
-  margin:20px;
-  position:relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  margin: 20px;
+  position: relative;
 }
 
-
 #game-results {
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(68, 68, 68, 0.405);
-  display:flex;
+  display: flex;
   justify-content: center;
-  align-items:center;
-  z-index:660;
+  align-items: center;
+  z-index: 660;
 }
 
 .results-card {
-  display:flex;
+  display: flex;
   flex-direction: row;
   background-color: #e8edf8;
-  border-radius:15px;
+  border-radius: 15px;
   justify-content: flex-start;
   align-items: center;
-  margin:5px;
-
-  
+  margin: 5px;
 }
 
 .results-rank-icon {
-  position:absolute;
-  height:30px;
-  bottom:0;
-  right:0;
-  width:30px;
-  font-size:20px;
-  border-radius:50%;
+  position: absolute;
+  height: 30px;
+  bottom: 0;
+  right: 0;
+  width: 30px;
+  font-size: 20px;
+  border-radius: 50%;
   color: black;
   background-color: #b3cbff;
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-
 }
 
 .results-rank-icon p {
-  margin:0;
+  margin: 0;
   font-size: 20px;
-  font-weight:800
+  font-weight: 800;
 }
 
 .gold {
-  background-color: gold
+  background-color: gold;
 }
 
 .silver {
@@ -497,60 +499,58 @@ button:disabled {
   background-color: #cd7f32;
 }
 .vertical-line {
-  width:2px;
-  height:80px;
+  width: 2px;
+  height: 80px;
   background-color: black;
-  margin:3px;
+  margin: 3px;
 }
 
 .rcard-pname {
   font-size: 35px;
-  font-weight:700;
-  width:300px;
-
+  font-weight: 700;
+  width: 300px;
 }
 
 .stats {
-  width:800px;
-  display:flex;
+  width: 800px;
+  display: flex;
   flex-direction: row;
   justify-content: space-around;
 }
 
 .rstat {
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 .rstat p {
-  margin:0;
-  margin-bottom:5px;  
-  font-size:14px; 
+  margin: 0;
+  margin-bottom: 5px;
+  font-size: 14px;
 }
 
 .stat-items {
-  display:flex;
+  display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
 .stat-plane {
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width:35px;
-  margin:3px;
-  height:35px;
-  color:black;
+  width: 35px;
+  margin: 3px;
+  height: 35px;
+  color: black;
   background-color: blue;
-  border-radius:50%;
-  font-size:23px;
+  border-radius: 50%;
+  font-size: 23px;
 }
-
 
 .stat-plane.blue {
   background-color: #76a3de;
@@ -561,20 +561,20 @@ button:disabled {
 }
 
 .stat-plane.yellow {
-  background-color: #ead178
+  background-color: #ead178;
 }
 
 .stat-plane.green {
   background-color: #b3dbcb;
 }
 .rstat h1 {
-  font-size:35px;
-  font-weight:800;
-  margin:0px;
-  line-height:33px;
-  padding:0px;
-  width:100%;
-  text-align:center;
+  font-size: 35px;
+  font-weight: 800;
+  margin: 0px;
+  line-height: 33px;
+  padding: 0px;
+  width: 100%;
+  text-align: center;
 }
 
 .players-list-container {
@@ -600,36 +600,36 @@ button:disabled {
   justify-content: center;
   align-items: center;
   padding: 2px;
-  margin-right:10px;
+  margin-right: 10px;
 }
 .player-piece-subcontainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .players-list-subcontainer.player-card {
-    padding: 5px 5px;
-    margin:5px !important;
+  padding: 5px 5px;
+  margin: 5px !important;
 }
 .player-piece {
   width: 60px;
   height: 35px;
   display: flex;
   box-sizing: border-box;
-  position:relative;
+  position: relative;
   flex-direction: row;
-  font-size:25px;
-  padding:4px;
-  border-radius:5px;
+  font-size: 25px;
+  padding: 4px;
+  border-radius: 5px;
   justify-content: center;
   align-items: center;
-  margin:5px;
+  margin: 5px;
 }
 
 .player-piece i {
-    margin:0;
+  margin: 0;
 }
 
 .player-card2 {
@@ -659,69 +659,69 @@ button:disabled {
 }
 
 .player-card2 p {
-    margin-top:0px;
-    margin-bottom:2px;
+  margin-top: 0px;
+  margin-bottom: 2px;
 }
 
-
-
 .player-icon.blue,
-.user-icon.blue, .player-piece.blue {
+.user-icon.blue,
+.player-piece.blue {
   background-color: #76a3de;
 }
 
 .player-icon.red,
-.user-icon.red, .player-piece.red {
+.user-icon.red,
+.player-piece.red {
   background-color: #f28266;
 }
 
 .player-icon.yellow,
-.user-icon.yellow, .player-piece.yellow {
+.user-icon.yellow,
+.player-piece.yellow {
   background-color: #ead178;
 }
 
 .player-icon.green,
-.user-icon.green, .player-piece.green{
+.user-icon.green,
+.player-piece.green {
   background-color: #b3dbcb;
 }
 
-
 .piece-progress-bar {
-    width:6px;
-    height:25px;
-    display:flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-    margin-left:8px;
-    background-color:rgb(225, 225, 225);
-    border-radius:2px;
+  width: 6px;
+  height: 25px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin-left: 8px;
+  background-color: rgb(225, 225, 225);
+  border-radius: 2px;
 }
 
 .piece-progress-fill {
-    width:6px;
-    height:100%;
-    background-color: #106846;
-    z-index:550;
-    border-radius:2px;
-
+  width: 6px;
+  height: 100%;
+  background-color: #106846;
+  z-index: 550;
+  border-radius: 2px;
 }
 
 .piece-status-indictator {
-    width:20px;
-    height:20px;
-    border-radius:50%;
-    background-color: rgb(218, 218, 218);
-    position:absolute;
-    bottom:-7px;
-    left:-7px;
-    color:black;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:12px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgb(218, 218, 218);
+  position: absolute;
+  bottom: -7px;
+  left: -7px;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
 }
 
 .piece-status-indictator i {
-    margin:0;
-    font-size:15px;
+  margin: 0;
+  font-size: 15px;
 }

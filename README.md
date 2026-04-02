@@ -42,6 +42,7 @@
    - [ ] Dice animation
    - [ ] Public game finding?
    - [ ] Piece movement animation
+   - [ ] Game creation settings -> variants?
  - [ ] Issues
    - [ ] Disappearing piece issue?? idk man
    - [x] Weird piece count when moving past 52
