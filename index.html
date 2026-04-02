@@ -57,7 +57,7 @@
                 color: black;
                 font-size: 25px;
                 margin-bottom: 20px;
-                margin-top:0px;
+                margin-top: 0px;
                 font-weight: 500;
               "
             >
@@ -77,10 +77,17 @@
             "
           />
           <div id="move-history-container">
-            <p style="font-size: 30px; margin-top: 0px;width:100%;text-align:center">Event History</p>
-            <div id="move-history">
-              
-            </div>
+            <p
+              style="
+                font-size: 30px;
+                margin-top: 0px;
+                width: 100%;
+                text-align: center;
+              "
+            >
+              Event History
+            </p>
+            <div id="move-history"></div>
           </div>
         </div>
         <div id="waiting-room">
@@ -144,6 +151,41 @@
 
           <div id="non-host-actions-container">
             <button id="leave-game">Leave Game</button>
+          </div>
+        </div>
+        <div id="game-results">
+          <div id="results-container">
+            <h1>Game Summary</h1>
+            <div class="results-card">
+              <div class="rcard-icon">
+                <i class="ph ph-user"></i>
+              </div>
+              <p class="rcard-pname">Player Name</p>
+              <div class="vertical-line"></div>
+              <div class="stats">
+                <div class="rstat">
+                  <p>PLANES COMPLETED</p>
+                  <div class="stat-items">
+                    <div class="stat-plane">
+                      <i class="ph ph-airplane-tilt"></i>
+                    </div>
+                    <div class="stat-plane">
+                      <i class="ph ph-airplane-tilt"></i>
+                    </div>
+                    <div class="stat-plane">
+                      <i class="ph ph-airplane-tilt"></i>
+                    </div>
+                    <div class="stat-plane">
+                      <i class="ph ph-airplane-tilt"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="rstat">
+                  <p>TOTAL TURNS</p>
+                  <h1>51</h1>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

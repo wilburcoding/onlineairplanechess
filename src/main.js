@@ -1061,4 +1061,10 @@ window.onload = function () {
       `);
     }
   }
+
+  // handle game end
+  socket.on("game-end", (data) => {
+    
+
+  })
 };

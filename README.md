@@ -22,6 +22,7 @@
  - [ ] Design and implement in-game UI
    - [x] Figure out how to make the interactive board :(
    - [x] Sidebar design?
+   - [ ] Game results UI
  - [ ] In-game functionality (not sure why I wasn't tracking this before lol)
    - [x] Piece Movement
      - [x] Checking for jumps -> same color and flying
@@ -67,6 +68,17 @@ In-game UI design:
    - Move history?
    - Game rules somwhere? (low priority)
    - Turn countdown? (possible later feature)
+  
+Game results UI design:
+ - Horizontal ranked list of players
+   - Click on item to show more stats:
+     - Captures
+     - Jumps
+     - Total turns -> least turns wins
+     - 6s Rolled
+ - Actions: Return to main menu
+ - Future: Rewards for win or loss?
+
 
 Game FLow
  - Presses start button
