@@ -34,11 +34,22 @@ function check_win(io, room) {
       }
     }
     if (player_finished) {
+      if (room.players[i].finish_count == -1) {
+        room.players[i].finish_count = room.tcount;
+      }
       finished_count += 1;
     }
   }
-
+  room.tcount += 1;
   if (finished_count == room.players.length - 1) {
+    //find last player who hasn't finished
+    for (let i = 0; i < room.players.length; i++) {
+      if (room.players[i].finish_count == -1) {
+        room.players[i].finish_count = room.tcount;
+        break;
+      }
+    }
+
     io.to(room.id).emit("game-end", room);
   } else {
     io.to(room.id).emit("game-update", room);
@@ -126,10 +137,12 @@ export const initSocket = (httpServer) => {
         if (room.players[0].id === uid) {
           room.state = "active-game";
           room.turn = 0;
+          room.tcount = 0;
           room.history = [];
           for (let i = 0; i < room.players.length; i++) {
             room.players[i].color = COLORS[i];
             room.players[i].pieces = [];
+            room.players[i].finish_count = -1;
             room.players[i].stats = {
               jumps: 0,
               sixs: 0,
@@ -163,6 +176,7 @@ export const initSocket = (httpServer) => {
       });
       room.turn = (room.turn + 1) % room.players.length;
       // dosen't add turn
+      room.tcount+=1;
       io.to(room.id).emit("game-update", room);
     });
     // move piece event -> calculate new position and update game

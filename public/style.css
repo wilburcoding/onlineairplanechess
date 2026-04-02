@@ -64,6 +64,11 @@ button {
   opacity: 0.8;
 }
 
+#g-return {
+  width:150px;
+  font-size:25px;
+}
+
 button:hover {
   scale: 1.02;
   opacity: 1;
@@ -399,7 +404,7 @@ button:disabled {
 
 #results-container {
   background-color:white;
-  padding:15px;
+  padding:30px 15px;
   border-radius:5px;
   color:black;
   display:flex;
@@ -407,17 +412,27 @@ button:disabled {
   justify-content: center;
   align-items:center;
 
+
+}
+
+#results-content {
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+  align-items:center;
+  width:100%;
+
 }
 
 .rcard-icon {
   width:80px;
   height:80px;
   border-radius:50%;
-  background-color: #76a3de;
+  background-color: white;
   display:flex;
   justify-content:center;
   align-items:center;
-  font-size:60px;
+  font-size:50px;
   margin:20px;
   position:relative;
 }
@@ -443,6 +458,7 @@ button:disabled {
   border-radius:15px;
   justify-content: flex-start;
   align-items: center;
+  margin:5px;
 
   
 }

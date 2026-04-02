@@ -596,7 +596,7 @@ window.onload = function () {
 
   $("#host-actions-container").hide();
   $("#non-host-actions-container").hide();
-  $("#game-results").hide();
+  // $("#game-results").hide();
 
   // start button -> home screen
   $("#start").on("click", function () {
@@ -945,7 +945,7 @@ window.onload = function () {
         if (piece.status == "finished") {
           sprite.visible = false;
         }
-      
+
         // dynamically update ui element
         if (piece.status == "home") {
           $(`#p${i + 1}-piece-${j}-status`).html(
@@ -983,20 +983,21 @@ window.onload = function () {
             loc = 51 + loc;
           } else {
             if (i == 2) {
-              progress = (loc - 1);
+              progress = loc - 1;
             } else {
               if (loc > EXIT_LOCATIONS[i]) {
-                progress = (loc - START_LOCATIONS[i]);
+                progress = loc - START_LOCATIONS[i];
               } else {
-                progress = (52 - START_LOCATIONS[i]) + loc;
+                progress = 52 - START_LOCATIONS[i] + loc;
               }
             }
           }
         }
-        console.log(progress)
-        $(`#p${i + 1}-piece-${j}-progress`).css("height", (progress / TOTAL) * 100 + "%");
-        
-
+        console.log(progress);
+        $(`#p${i + 1}-piece-${j}-progress`).css(
+          "height",
+          (progress / TOTAL) * 100 + "%",
+        );
       }
     }
   });
@@ -1067,9 +1068,54 @@ window.onload = function () {
   socket.on("game-end", (data) => {
     $("#game-results").show();
 
-    console.log(data);
-
-
-
-  })
+    let sorted_players = data.players.sort((a, b) => {
+      return a.finish_count - b.finish_count;
+    });
+    const RANK_COLORS = ["gold", "silver", "bronze", ""];
+    for (let i = 0; i < sorted_players.length; i++) {
+      $("#results-content").append(`
+        <div class="results-card">
+          <div class="rcard-icon ${sorted_players[i].color}">
+            <div class="results-rank-icon ${RANK_COLORS[i]}">
+              <p>${i + 1}</p>
+            </div>
+            <i class="ph ph-user"></i>
+          </div>
+          <p class="rcard-pname">${sorted_players[i].username}</p>
+          <div class="vertical-line"></div>
+          <div class="stats">
+            <div class="rstat">
+              <p>PLANES   </p>
+              <div class="stat-items" id="p${i}-stat-items">
+              </div>
+            </div>
+            <div class="rstat">
+              <p>TOTAL JUMPS</p>
+              <h1>${sorted_players[i].stats.jumps}x</h1>
+            </div>
+            <div class="rstat">
+              <p>TOTAL CAPTURES</p>
+              <h1>${sorted_players[i].stats.captures}x</h1>
+            </div>
+            <div class="rstat">
+              <p>SIXS ROLLED</p>
+              <h1>${sorted_players[i].stats.sixs}x</h1>
+            </div>
+          </div>
+        </div>`);
+      for (let j = 0; j < 4; j++) {
+        let style = `style="opacity:${sorted_players[i].pieces[j].status == "finished" ? 1 : 0.5}"`;
+        let icon = `<i class="ph ph-trophy"></i>`;
+        if (sorted_players[i].pieces[j].status == "home") {
+          icon = `<i class="ph ph-warehouse"></i>`;
+        } else if (sorted_players[i].pieces[j].status == "active") {
+          icon = `<i class="ph ph-airplane-in-flight"></i>`;
+        } 
+        $("#p" + (i) + "-stat-items").append(`
+        <div class="stat-plane ${sorted_players[i].color}" ${style}>
+          ${icon}
+        </div>`);
+      }
+    }
+  });
 };
