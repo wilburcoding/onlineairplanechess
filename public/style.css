@@ -402,7 +402,10 @@ button:disabled {
   padding:15px;
   border-radius:5px;
   color:black;
-
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:center;
 
 }
 
@@ -416,7 +419,9 @@ button:disabled {
   align-items:center;
   font-size:60px;
   margin:20px;
+  position:relative;
 }
+
 
 #game-results {
   position:absolute;
@@ -442,6 +447,39 @@ button:disabled {
   
 }
 
+.results-rank-icon {
+  position:absolute;
+  height:30px;
+  bottom:0;
+  right:0;
+  width:30px;
+  font-size:20px;
+  border-radius:50%;
+  color: black;
+  background-color: #b3cbff;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.results-rank-icon p {
+  margin:0;
+  font-size: 20px;
+  font-weight:800
+}
+
+.gold {
+  background-color: gold
+}
+
+.silver {
+  background-color: silver;
+}
+
+.bronze {
+  background-color: #cd7f32;
+}
 .vertical-line {
   width:2px;
   height:80px;
@@ -463,15 +501,16 @@ button:disabled {
   justify-content: space-around;
 }
 
-.stat {
+.rstat {
   display:flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.stat p {
+.rstat p {
   margin:0;
+  margin-bottom:5px;  
   font-size:14px; 
 }
 
@@ -487,18 +526,39 @@ button:disabled {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width:30px;
-  height:30px;
+  width:35px;
+  margin:3px;
+  height:35px;
   color:black;
   background-color: blue;
   border-radius:50%;
-  font-size:25px;
+  font-size:23px;
 }
 
-.stat h1 {
-  font-size:25px;
+
+.stat-plane.blue {
+  background-color: #76a3de;
+}
+
+.stat-plane.red {
+  background-color: #f28266;
+}
+
+.stat-plane.yellow {
+  background-color: #ead178
+}
+
+.stat-plane.green {
+  background-color: #b3dbcb;
+}
+.rstat h1 {
+  font-size:35px;
   font-weight:800;
-  margin:2px;
+  margin:0px;
+  line-height:33px;
+  padding:0px;
+  width:100%;
+  text-align:center;
 }
 
 .players-list-container {

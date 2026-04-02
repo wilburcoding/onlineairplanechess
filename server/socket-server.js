@@ -23,6 +23,29 @@ function generate_room_code() {
   return result;
 }
 
+function check_win(io, room) {
+  let finished_count = 0;
+  for (let i =0; i < room.players.length;i++) {
+    let player_finished = true;
+    for (let j =0; j < room.players[i].pieces.length;j++) {
+      if (room.players[i].pieces[j].status != "finished") {
+        player_finished = false;
+        break;
+      }
+    } 
+    if (player_finished) {
+      finished_count +=1;
+    }
+  }
+
+  if (finished_count == room.players.length - 1) {
+    io.to(room.id).emit("game-end", room);
+  } else {
+    io.to(room.id).emit("game-update", room);
+  }
+
+}
+
 export const initSocket = (httpServer) => {
   io = new SocketIOServer(httpServer, {
     cors: {
@@ -74,7 +97,6 @@ export const initSocket = (httpServer) => {
           }
         }
       }
-      console.log(rooms);
     });
 
     socket.on("join-room", (data, callback) => {
@@ -111,7 +133,7 @@ export const initSocket = (httpServer) => {
             room.players[i].pieces = [];
             for (let j = 0; j < 4; j++) {
               room.players[i].pieces.push({
-                status: "home",
+                status: i < 3 ? "finished" : "home", // debugging only
                 location:
                   room.players[i].color.substring(0, 1).toUpperCase() + "-" + j,
               });
@@ -147,8 +169,6 @@ export const initSocket = (httpServer) => {
       let player_index = data.player;
       let piece_index = data.piece;
       let dice_roll = data.roll;
-      console.log(data);
-      console.log(room.players[player_index]);
       if (room.players[player_index].pieces[piece_index].status === "home") {
         room.players[player_index].pieces[piece_index].status = "active";
         room.players[player_index].pieces[piece_index].location =
@@ -169,7 +189,7 @@ export const initSocket = (httpServer) => {
           type: "repeat",
           color: player_index,
         });
-        io.to(room.id).emit("game-update", room);
+        check_win(io, room);
       } else if (
         room.players[player_index].pieces[piece_index].status === "active"
       ) {
@@ -209,7 +229,6 @@ export const initSocket = (httpServer) => {
           room.players[player_index].pieces[piece_index].location =
             loc_type + "-" + loc_num;
 
-          console.log(loc_num, ",", prev_num);
           let move_num = loc_num - parseInt(prev_num);
           if (prev_num > loc_num) {
             move_num = loc_num + (52 - parseInt(prev_num));
@@ -236,7 +255,7 @@ export const initSocket = (httpServer) => {
             });
           }
 
-          io.to(room.id).emit("game-update", room);
+          check_win(io, room);
         } else {
           loc_num = parseInt(loc_num);
           loc_num += dice_roll;
@@ -278,7 +297,7 @@ export const initSocket = (httpServer) => {
                 color: player_index,
               });
               room.turn = (room.turn + 1) % room.players.length;
-              io.to(room.id).emit("game-update", room);
+              check_win(io, room);
               return;
             } else {
               if (loc_num > 52) {
@@ -341,7 +360,7 @@ export const initSocket = (httpServer) => {
                   color: player_index,
                 });
                 room.turn = (room.turn + 1) % room.players.length;
-                io.to(room.id).emit("game-update", room);
+                check_win(io, room);
                 return;
               }
               // check everything again now that at new spot
@@ -440,10 +459,8 @@ export const initSocket = (httpServer) => {
               });
             }
 
-            console.log("prev num and new loc");
-            console.log(loc_num);
-            console.log(prev_num);
-            io.to(room.id).emit("game-update", room);
+
+            check_win(io, room);
           } else if (loc_type.includes("H")) {
             // hangar path
             if (loc_num > 5) {
@@ -480,11 +497,10 @@ export const initSocket = (httpServer) => {
                 color: player_index,
               });
             }
-            io.to(room.id).emit("game-update", room);
+            check_win(io, room);
           }
         }
       }
-      console.log(room.players[player_index]);
     });
   });
 

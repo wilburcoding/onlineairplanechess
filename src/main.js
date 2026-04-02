@@ -596,6 +596,7 @@ window.onload = function () {
 
   $("#host-actions-container").hide();
   $("#non-host-actions-container").hide();
+  $("#game-results").hide();
 
   // start button -> home screen
   $("#start").on("click", function () {
@@ -1064,6 +1065,8 @@ window.onload = function () {
 
   // handle game end
   socket.on("game-end", (data) => {
+    $("#game-results").show();
+    console.log("game-end");
     
 
   })
