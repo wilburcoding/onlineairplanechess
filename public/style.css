@@ -357,6 +357,66 @@ button:disabled {
   margin-bottom: 20px;
 }
 
+#chat-container {
+  display:flex;
+  flex:1;
+  min-height:0;
+  overflow:hidden;
+  width:100%;
+  height:100%;
+  flex-direction:column;
+  border-radius:5px;
+  border: 1px solid black;
+  background-color: #bbccf2;
+}
+
+#chat-input-container button{
+  height:35px;
+  margin:10px;
+  margin-left:0px;
+  box-sizing: border-box;
+  width:20%;
+  border-radius: 5px;
+  font-size:22px;
+  outline:none;
+}
+#chat-input-container button:hover {
+  scale: 1;
+}
+
+#chat-input-container input {
+  height:35px;
+  font-size:20px;
+  box-sizing: border-box;
+  width:80%;
+  margin-right:0px;
+  margin:10px;
+  border-radius: 5px;
+  outline:none;
+}
+
+#chat-content {
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+  align-items: center;
+  width:100%;
+  margin:0;
+  height: calc(100% - 50px);
+
+}
+
+#chat-input-container {
+  display:flex;
+  position:relative;
+  flex-direction:row;
+  justify-content: flex-start;
+  align-items:center;
+  width:100%;
+  padding:0px;
+  height:50px;
+  margin:0;
+}
 #move-history-container {
   display: flex;
   flex: 1;
@@ -365,6 +425,7 @@ button:disabled {
   width: 100%;
   flex-direction: column;
 }
+
 #move-history {
   width: 100%;
   padding: 0;
@@ -601,6 +662,7 @@ button:disabled {
   padding: 2px;
   margin-right: 10px;
 }
+
 .player-piece-subcontainer {
   display: flex;
   flex-direction: row;

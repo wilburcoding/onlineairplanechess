@@ -39,13 +39,25 @@
           <div class="players-list-container"></div>
           <hr
             style="
-              margin-top: 15px;
-              margin-bottom: 10px;
+              margin-top: 10px;
+              margin-bottom: 25px;
               border: solid 1px #000;
               width: 100%;
             "
           />
-          <p style="font-size: 30px; margin-top: 0px">Your Pieces</p>
+          <div id="chat-container">
+            <div id="chat-content"></div>
+            <div id="chat-input-container">
+              <input
+                type="text"
+                id="chat-input"
+                placeholder="Type a message..."
+              />
+              <button id="chat-send">
+                <i class="ph ph-paper-plane-right"></i>
+              </button>
+            </div>
+          </div>
         </div>
         <div id="sidebar-right" style="right: 0" class="sidebar">
           <div id="dice-container">
@@ -158,8 +170,10 @@
 
         <div id="game-results">
           <div id="results-container">
-            <h1 style="font-size: 50px; margin-bottom: 0px;line-height:45px;">Game Summary</h1>
-            <p style="font-size:25px;margin-bottom:5px;" id="rmessage"></p>
+            <h1 style="font-size: 50px; margin-bottom: 0px; line-height: 45px">
+              Game Summary
+            </h1>
+            <p style="font-size: 25px; margin-bottom: 5px" id="rmessage"></p>
             <div id="results-content"></div>
             <button id="g-return">Return</button>
           </div>

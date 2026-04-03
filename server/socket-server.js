@@ -181,6 +181,7 @@ export const initSocket = (httpServer) => {
     });
     const COLORS = ["green", "red", "yellow", "blue"];
     socket.on("start-game", () => {
+      console.log(rooms);
       let room = Object.values(rooms).find((r) =>
         r.players.some((p) => p.id === uid),
       );

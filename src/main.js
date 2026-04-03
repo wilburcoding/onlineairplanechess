@@ -3,6 +3,7 @@ import {
   Assets,
   Sprite,
   Texture,
+  Point,
   Polygon,
   Graphics,
   Text,
@@ -807,7 +808,7 @@ window.onload = function () {
       },
     );
   });
-
+  
   // start game -> host only waiting room
   $("#start-game").on("click", function () {
     socket.emit("start-game");
@@ -839,6 +840,15 @@ window.onload = function () {
         viewport.addChild(sprite);
         player.push(sprite);
         sprite.eventMode = "static";
+        if (room_data.players[i].id == socket.id) {
+          sprite.on("pointerover", () => {
+            sprite.alpha = 0.7;
+          });
+
+          sprite.on("pointerout", () => {
+            sprite.alpha = 1;
+          });
+        }
         sprite.on("click", () => {
           console.log(game_data);
           console.log(game_data.turn);
@@ -1007,7 +1017,7 @@ window.onload = function () {
           );
         }
       } else {
-        for (let j =0; j < 4; j++) {
+        for (let j = 0; j < 4; j++) {
           const sprite = player_sprites[i][j];
           sprite.visible = false;
         }
@@ -1074,6 +1084,20 @@ window.onload = function () {
           </div>
         </div>
       `);
+      $(`#p${i}-piece-${k}`).on("click", function () {
+        if (game_data.players[i - 1]) {
+          const piece = game_data.players[i - 1].pieces[k];
+          if (piece.status != "finished") {
+            const loc = COORDS[piece.location];
+            viewport.animate({
+              position: new Point(loc[0], loc[1]),
+              time: 1000,
+              scale: 0.9,
+              ease: "easeInOutSine",
+            });
+          }
+        }
+      });
     }
   }
   // handle sudden game end -> rank based on piece completed + progress
