@@ -7,14 +7,14 @@
 ## TODO
  - [x] Figure out how to zoom and scroll animations
  - [x] Figure out how Pixi.js works 
- - [ ] Use Socket.io for multiplayer functions? -> Need to use separate API
-   - [ ] Implement server-side -> need to fix CORS issue
+ - [x] Use Socket.io for multiplayer functions? -> Need to use separate API
+   - [x] Implement server-side -> need to fix CORS issue
      - [x] Connect and disconnect
      - [x] Handle rooms logic   
        - [x] Start game logic
      - [x] Handle waiting room logic
-     - [ ] Handle user disconnecting (from game & lobby)
-   - [ ] Implement client-side
+     - [x] Handle user disconnecting (from game & lobby)
+   - [x] Implement client-side
      - [x] Handle rooms logic
        - [x] Start game logic
      - [x] Handle waiting in room logic

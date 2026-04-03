@@ -50,7 +50,7 @@ function check_win(io, room) {
         break;
       }
     }
-
+    room.message = "The game has ended! See the results below.";
     io.to(room.id).emit("game-end", room);
   } else {
     io.to(room.id).emit("game-update", room);
@@ -77,28 +77,48 @@ export const initSocket = (httpServer) => {
         r.players.some((p) => p.id === uid),
       );
       if (room) {
-        if (room.players.length > 2) {
-          if (room.players[0].id === uid) {
-            // is host -> end game for everyone
-            io.to(room.id).emit("game-end-sudden", room);
-          } else {
-            // not host -> remove player from room and update
-            // update turn
-            // room.players = room.players.filter((p) => p.id !== uid);
+        if (room.state == "active-game") {
+          if (room.players.length > 2) {
+            if (room.players[0].id === uid) {
+              // is host -> end game for everyone
+              room.message =
+                "The host has left the game. The game has ended, see the results below.";
+              io.to(room.id).emit("game-end-sudden", room);
+              delete rooms[room.id]
+            } else {
+              // not host -> remove player from room and update
+              // update turn
+              // room.players = room.players.filter((p) => p.id !== uid);
 
-            while (room.players[room.turn].id === uid) {
-              room.turn = (room.turn + 1) % room.players.length;
+              while (room.players[room.turn].id === uid) {
+                room.turn = (room.turn + 1) % room.players.length;
+              }
+              const TURN_PLAYER = room.players[room.turn];
+              room.players = room.players.filter((p) => p.id !== uid);
+              room.turn = room.players.findIndex(
+                (p) => p.id === TURN_PLAYER.id,
+              );
+              room.update = false;
+              io.to(room.id).emit("game-update", room);
             }
-            const TURN_PLAYER = room.players[room.turn];
-            room.players = room.players.filter((p) => p.id !== uid);
-            room.turn = room.players.findIndex((p) => p.id === TURN_PLAYER.id);
-            room.update = false;
-
-            io.to(room.id).emit("game-update", room);
+          } else {
+            // no enough players -> end game for everyone
+            room.message =
+              "There are not enough players to continue. The game has ended, see the results below.";
+            io.to(room.id).emit("game-end-sudden", room);
+            delete rooms[room.id]
           }
         } else {
-          // no enough players -> end game for everyone
-          io.to(room.id).emit("game-end-sudden", room);
+          if (room.players[0].id === uid) {
+            // is host -> delete room and emit update to everyone in room
+            room.players = [];
+            io.to(room.id).emit("waiting-room-update", room);
+            delete rooms[room.id]
+          } else {
+            // not host -> remove player from room
+            room.players = room.players.filter((p) => p.id !== uid);
+            io.to(room.id).emit("waiting-room-update", room);
+          }
         }
       } else {
         // do nothing

@@ -537,6 +537,8 @@ async function init() {
 let dice_roll = null;
 
 window.onload = function () {
+  const EXIT_LOCATIONS = [26, 39, 52, 13];
+  const START_LOCATIONS = [28, 41, 2, 15];
   // Hnalding home screen functionality
 
   $("#joincode").on("input", function () {
@@ -940,69 +942,75 @@ window.onload = function () {
     }
 
     //update pieces
-    for (let i = 0; i < game_data.players.length; i++) {
-      for (let j = 0; j < game_data.players[i].pieces.length; j++) {
-        const piece = game_data.players[i].pieces[j];
-        const sprite = player_sprites[i][j];
-        sprite.position.set(
-          COORDS[piece.location][0] - 45,
-          COORDS[piece.location][1] - 45,
-        );
-        if (piece.status == "finished") {
-          sprite.visible = false;
-        }
-
-        // dynamically update ui element
-        if (piece.status == "home") {
-          $(`#p${i + 1}-piece-${j}-status`).html(
-            `<i class="ph ph-warehouse"></i>`,
+    for (let i = 0; i < 4; i++) {
+      if (game_data.players[i]) {
+        for (let j = 0; j < 4; j++) {
+          const piece = game_data.players[i].pieces[j];
+          const sprite = player_sprites[i][j];
+          sprite.position.set(
+            COORDS[piece.location][0] - 45,
+            COORDS[piece.location][1] - 45,
           );
-        } else if (piece.location.includes("exit")) {
-          $(`#p${i + 1}-piece-${j}-status`).html(
-            `<i class="ph ph-airplane-taxiing"></i>`,
-          );
-        } else if (piece.location.includes("H")) {
-          $(`#p${i + 1}-piece-${j}-status`).html(
-            `<i class="ph ph-airplane-landing"></i>`,
-          );
-        } else if (piece.status == "active") {
-          $(`#p${i + 1}-piece-${j}-status`).html(
-            `<i class="ph ph-airplane-in-flight"></i>`,
-          );
-        } else {
-          $(`#p${i + 1}-piece-${j}-status`).html(`<i class="ph ph-check"></i>`);
-        }
-        //progress bar
-        const EXIT_LOCATIONS = [26, 39, 52, 13];
-        const START_LOCATIONS = [28, 41, 2, 15];
-        const TOTAL = 57;
-        let progress = 0;
-        if (piece.status == "home") {
-          progress = 0;
-        } else if (piece.status == "finished") {
-          progress = 57;
-        } else if (piece.location.includes("exit")) {
-          progress = 0;
-        } else if (piece.status == "active") {
-          let loc = parseInt(piece.location.split("-")[1]);
-          if (piece.location.includes("H")) {
-            loc = 51 + loc;
+          if (piece.status == "finished") {
+            sprite.visible = false;
           }
-          if (i == 2) {
-            progress = loc - 1;
+
+          // dynamically update ui element
+          if (piece.status == "home") {
+            $(`#p${i + 1}-piece-${j}-status`).html(
+              `<i class="ph ph-warehouse"></i>`,
+            );
+          } else if (piece.location.includes("exit")) {
+            $(`#p${i + 1}-piece-${j}-status`).html(
+              `<i class="ph ph-airplane-taxiing"></i>`,
+            );
+          } else if (piece.location.includes("H")) {
+            $(`#p${i + 1}-piece-${j}-status`).html(
+              `<i class="ph ph-airplane-landing"></i>`,
+            );
+          } else if (piece.status == "active") {
+            $(`#p${i + 1}-piece-${j}-status`).html(
+              `<i class="ph ph-airplane-in-flight"></i>`,
+            );
           } else {
-            if (loc > EXIT_LOCATIONS[i]) {
-              progress = loc - START_LOCATIONS[i];
+            $(`#p${i + 1}-piece-${j}-status`).html(
+              `<i class="ph ph-check"></i>`,
+            );
+          }
+          //progress bar
+          const TOTAL = 57;
+          let progress = 0;
+          if (piece.status == "home") {
+            progress = 0;
+          } else if (piece.status == "finished") {
+            progress = 57;
+          } else if (piece.location.includes("exit")) {
+            progress = 0;
+          } else if (piece.status == "active") {
+            let loc = parseInt(piece.location.split("-")[1]);
+            if (piece.location.includes("H")) {
+              loc = 51 + loc;
+            }
+            if (i == 2) {
+              progress = loc - 1;
             } else {
-              progress = 52 - START_LOCATIONS[i] + loc;
+              if (loc > EXIT_LOCATIONS[i]) {
+                progress = loc - START_LOCATIONS[i];
+              } else {
+                progress = 52 - START_LOCATIONS[i] + loc;
+              }
             }
           }
+          $(`#p${i + 1}-piece-${j}-progress`).css(
+            "height",
+            (progress / TOTAL) * 100 + "%",
+          );
         }
-        console.log(progress);
-        $(`#p${i + 1}-piece-${j}-progress`).css(
-          "height",
-          (progress / TOTAL) * 100 + "%",
-        );
+      } else {
+        for (let j =0; j < 4; j++) {
+          const sprite = player_sprites[i][j];
+          sprite.visible = false;
+        }
       }
     }
   });
@@ -1071,9 +1079,11 @@ window.onload = function () {
   // handle sudden game end -> rank based on piece completed + progress
   socket.on("game-end-sudden", (data) => {
     $("#game-results").show();
+    $("#rmessage").text(data.message);
     for (let i = 0; i < data.players.length; i++) {
       let sum_score = 0;
       for (let j = 0; j < data.players[i].pieces.length; j++) {
+        let piece = data.players[i].pieces[j];
         if (data.players[i].pieces[j].status == "finished") {
           sum_score += 57;
         } else if (data.players[i].pieces[j].status == "active") {
@@ -1149,12 +1159,13 @@ window.onload = function () {
           ${icon}
         </div>`);
       }
-    } 
+    }
   });
 
   // handle game end
   socket.on("game-end", (data) => {
     $("#game-results").show();
+    $("#rmessage").text(data.message);
 
     let sorted_players = data.players.sort((a, b) => {
       return a.finish_count - b.finish_count;
