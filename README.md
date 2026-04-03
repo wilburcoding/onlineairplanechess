@@ -9,21 +9,21 @@
  - [x] Figure out how Pixi.js works 
  - [ ] Use Socket.io for multiplayer functions? -> Need to use separate API
    - [ ] Implement server-side -> need to fix CORS issue
-     - [ ] Connect and disconnect
-     - [ ] Handle rooms logic   
+     - [x] Connect and disconnect
+     - [x] Handle rooms logic   
        - [x] Start game logic
      - [x] Handle waiting room logic
      - [ ] Handle user disconnecting (from game & lobby)
    - [ ] Implement client-side
-     - [ ] Handle rooms logic
+     - [x] Handle rooms logic
        - [x] Start game logic
      - [x] Handle waiting in room logic
-     - [ ] More TBD
- - [ ] Design and implement in-game UI
+     - [x] More TBD
+ - [x] Design and implement in-game UI
    - [x] Figure out how to make the interactive board :(
    - [x] Sidebar design?
-   - [ ] Game results UI
- - [ ] In-game functionality (not sure why I wasn't tracking this before lol)
+   - [x] Game results UI
+ - [x] In-game functionality (not sure why I wasn't tracking this before lol)
    - [x] Piece Movement
      - [x] Checking for jumps -> same color and flying
      - [x] Capturing pieces for all movements

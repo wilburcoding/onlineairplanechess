@@ -41,6 +41,7 @@ function check_win(io, room) {
     }
   }
   room.tcount += 1;
+  room.update = true;
   if (finished_count == room.players.length - 1) {
     //find last player who hasn't finished
     for (let i = 0; i < room.players.length; i++) {
@@ -71,6 +72,37 @@ export const initSocket = (httpServer) => {
 
     socket.on("disconnect", () => {
       console.log("User " + uid + " disconnected");
+      // check if user was in a room
+      let room = Object.values(rooms).find((r) =>
+        r.players.some((p) => p.id === uid),
+      );
+      if (room) {
+        if (room.players.length > 2) {
+          if (room.players[0].id === uid) {
+            // is host -> end game for everyone
+            io.to(room.id).emit("game-end-sudden", room);
+          } else {
+            // not host -> remove player from room and update
+            // update turn
+            // room.players = room.players.filter((p) => p.id !== uid);
+
+            while (room.players[room.turn].id === uid) {
+              room.turn = (room.turn + 1) % room.players.length;
+            }
+            const TURN_PLAYER = room.players[room.turn];
+            room.players = room.players.filter((p) => p.id !== uid);
+            room.turn = room.players.findIndex((p) => p.id === TURN_PLAYER.id);
+            room.update = false;
+
+            io.to(room.id).emit("game-update", room);
+          }
+        } else {
+          // no enough players -> end game for everyone
+          io.to(room.id).emit("game-end-sudden", room);
+        }
+      } else {
+        // do nothing
+      }
     });
 
     socket.on("create-room", (data) => {
@@ -138,6 +170,7 @@ export const initSocket = (httpServer) => {
           room.state = "active-game";
           room.turn = 0;
           room.tcount = 0;
+          room.update = true;
           room.history = [];
           for (let i = 0; i < room.players.length; i++) {
             room.players[i].color = COLORS[i];
@@ -176,7 +209,8 @@ export const initSocket = (httpServer) => {
       });
       room.turn = (room.turn + 1) % room.players.length;
       // dosen't add turn
-      room.tcount+=1;
+      room.tcount += 1;
+      room.update = true;
       io.to(room.id).emit("game-update", room);
     });
     // move piece event -> calculate new position and update game
@@ -279,7 +313,6 @@ export const initSocket = (httpServer) => {
           if (dice_roll != 6) {
             room.turn = (room.turn + 1) % room.players.length;
           } else {
-
             room.history.push({
               text:
                 room.players[player_index].username +
@@ -345,7 +378,7 @@ export const initSocket = (httpServer) => {
                       loc_type + "-" + loc_num &&
                     i != player_index
                   ) {
-                    room.players[player_index].stats.captures +=1;
+                    room.players[player_index].stats.captures += 1;
                     room.players[i].pieces[j].status = "home";
                     room.players[i].pieces[j].location =
                       room.players[i].color.substring(0, 1).toUpperCase() +
@@ -372,7 +405,7 @@ export const initSocket = (httpServer) => {
               } else if (loc_num % 4 == [2, 3, 0, 1][player_index]) {
                 //landing on same color -> go ahead 4 spaces and check if
                 loc_num += 4;
-                room.players[player_index].stats.jumps +=1;
+                room.players[player_index].stats.jumps += 1;
                 jumped = true;
 
                 //check if jumped onto hangar win spot
@@ -410,7 +443,7 @@ export const initSocket = (httpServer) => {
                     i != player_index
                   ) {
                     room.players[i].pieces[j].status = "home";
-                    room.players[player_index].stats.captures +=1;
+                    room.players[player_index].stats.captures += 1;
                     room.players[i].pieces[j].location =
                       room.players[i].color.substring(0, 1).toUpperCase() +
                       "-" +
@@ -436,7 +469,7 @@ export const initSocket = (httpServer) => {
               if (flying) {
                 if (loc_num % 4 == [2, 3, 0, 1][player_index] && !jumped) {
                   loc_num += 4;
-                  room.players[player_index].stats.jumps +=1;
+                  room.players[player_index].stats.jumps += 1;
                 }
               }
               if (loc_num > 52) {
@@ -453,7 +486,7 @@ export const initSocket = (httpServer) => {
                       i != player_index
                     ) {
                       room.players[i].pieces[j].status = "home";
-                      room.players[player_index].stats.captures +=1;
+                      room.players[player_index].stats.captures += 1;
                       room.players[i].pieces[j].location =
                         room.players[i].color.substring(0, 1).toUpperCase() +
                         "-" +

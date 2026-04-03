@@ -532,7 +532,7 @@ async function init() {
 
   viewport.moveCenter(0, 0);
   viewport.setZoom(0.27);
-  viewport.clampZoom({minScale: 0.15, maxScale: 1});
+  viewport.clampZoom({ minScale: 0.15, maxScale: 1 });
 }
 let dice_roll = null;
 
@@ -877,17 +877,21 @@ window.onload = function () {
       "background-color",
       COLOR_HEX[game_data.turn],
     );
-    if (game_data.players[game_data.turn].id == socket.id) {
-      $("#roll-dice").prop("disabled", false);
-      $("#turn-status").text("Your Turn");
-    } else {
-      $("#roll-dice").prop("disabled", true);
-      $("#turn-status").html(
-        "Waiting on <strong>" +
-          game_data.players[game_data.turn].username +
-          "</strong>",
-      );
+    if (game_data.update == true) {
+      if (game_data.players[game_data.turn].id == socket.id) {
+        console.log("dice change");
+        $("#roll-dice").prop("disabled", false);
+        $("#turn-status").text("Your Turn");
+      } else {
+        $("#roll-dice").prop("disabled", true);
+        $("#turn-status").html(
+          "Waiting on <strong>" +
+            game_data.players[game_data.turn].username +
+            "</strong>",
+        );
+      }
     }
+
     //update move history log UI
     if ($("#move-history").children().length < game_data.history.length) {
       console.log(game_data.history);
@@ -983,15 +987,14 @@ window.onload = function () {
           let loc = parseInt(piece.location.split("-")[1]);
           if (piece.location.includes("H")) {
             loc = 51 + loc;
+          }
+          if (i == 2) {
+            progress = loc - 1;
           } else {
-            if (i == 2) {
-              progress = loc - 1;
+            if (loc > EXIT_LOCATIONS[i]) {
+              progress = loc - START_LOCATIONS[i];
             } else {
-              if (loc > EXIT_LOCATIONS[i]) {
-                progress = loc - START_LOCATIONS[i];
-              } else {
-                progress = 52 - START_LOCATIONS[i] + loc;
-              }
+              progress = 52 - START_LOCATIONS[i] + loc;
             }
           }
         }
@@ -1065,6 +1068,89 @@ window.onload = function () {
       `);
     }
   }
+  // handle sudden game end -> rank based on piece completed + progress
+  socket.on("game-end-sudden", (data) => {
+    $("#game-results").show();
+    for (let i = 0; i < data.players.length; i++) {
+      let sum_score = 0;
+      for (let j = 0; j < data.players[i].pieces.length; j++) {
+        if (data.players[i].pieces[j].status == "finished") {
+          sum_score += 57;
+        } else if (data.players[i].pieces[j].status == "active") {
+          let loc = parseInt(piece.location.split("-")[1]);
+          if (piece.location.includes("H")) {
+            loc = 51 + loc;
+          }
+          if (i == 2) {
+            sum_score += loc - 1;
+          } else {
+            if (loc > EXIT_LOCATIONS[i]) {
+              sum_score += loc - START_LOCATIONS[i];
+            } else {
+              sum_score += 52 - START_LOCATIONS[i] + loc;
+            }
+          }
+        }
+      }
+      if (data.players[i].finish_count != -1) {
+        sum_score += data.turn - data.players[i].finish_count;
+      }
+      sum_score += data.players[i].stats.captures;
+      sum_score += data.players[i].stats.jumps;
+      sum_score += data.players[i].stats.sixs;
+      data.players[i].score = sum_score;
+    }
+
+    let sorted_players = data.players.sort((a, b) => {
+      return b.score - a.score;
+    });
+    const RANK_COLORS = ["gold", "silver", "bronze", ""];
+    for (let i = 0; i < sorted_players.length; i++) {
+      $("#results-content").append(`
+        <div class="results-card">
+          <div class="rcard-icon ${sorted_players[i].color}">
+            <div class="results-rank-icon ${RANK_COLORS[i]}">
+              <p>${i + 1}</p>
+            </div>
+            <i class="ph ph-user"></i>
+          </div>
+          <p class="rcard-pname">${sorted_players[i].username}</p>
+          <div class="vertical-line"></div>
+          <div class="stats">
+            <div class="rstat">
+              <p>PLANES   </p>
+              <div class="stat-items" id="p${i}-stat-items">
+              </div>
+            </div>
+            <div class="rstat">
+              <p>TOTAL JUMPS</p>
+              <h1>${sorted_players[i].stats.jumps}x</h1>
+            </div>
+            <div class="rstat">
+              <p>TOTAL CAPTURES</p>
+              <h1>${sorted_players[i].stats.captures}x</h1>
+            </div>
+            <div class="rstat">
+              <p>SIXS ROLLED</p>
+              <h1>${sorted_players[i].stats.sixs}x</h1>
+            </div>
+          </div>
+        </div>`);
+      for (let j = 0; j < 4; j++) {
+        let style = `style="opacity:${sorted_players[i].pieces[j].status == "finished" ? 1 : 0.5}"`;
+        let icon = `<i class="ph ph-trophy"></i>`;
+        if (sorted_players[i].pieces[j].status == "home") {
+          icon = `<i class="ph ph-warehouse"></i>`;
+        } else if (sorted_players[i].pieces[j].status == "active") {
+          icon = `<i class="ph ph-airplane-in-flight"></i>`;
+        }
+        $("#p" + i + "-stat-items").append(`
+        <div class="stat-plane ${sorted_players[i].color}" ${style}>
+          ${icon}
+        </div>`);
+      }
+    } 
+  });
 
   // handle game end
   socket.on("game-end", (data) => {
@@ -1146,6 +1232,5 @@ window.onload = function () {
     );
     viewport.moveCenter(0, 0);
     viewport.setZoom(0.27);
-
   });
 };
