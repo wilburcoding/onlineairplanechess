@@ -161,6 +161,7 @@ export const initSocket = (httpServer) => {
       }
     });
 
+    // handle joining rooms
     socket.on("join-room", (data, callback) => {
       let room = Object.values(rooms).find((r) => r.code === data.room_code);
       if (room) {
@@ -180,6 +181,8 @@ export const initSocket = (httpServer) => {
       }
     });
     const COLORS = ["green", "red", "yellow", "blue"];
+
+    //handle game start from host
     socket.on("start-game", () => {
       console.log(rooms);
       let room = Object.values(rooms).find((r) =>
@@ -595,6 +598,19 @@ export const initSocket = (httpServer) => {
         }
       }
     });
+
+    // handle new chat message
+    socket.on("send-chat", (data) => {
+      console.log(data);
+      let room = Object.values(rooms).find((r) => r.players.some((p) => p.id === uid));
+      if (room) {
+        io.to(room.id).emit("recieve-chat", {
+          username: room.players.find((p) => p.id === uid).username,
+          message: data.message,
+          id: uid,
+        })
+      }
+    })
   });
 
   return io;

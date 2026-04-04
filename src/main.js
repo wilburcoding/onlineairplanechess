@@ -808,7 +808,7 @@ window.onload = function () {
       },
     );
   });
-  
+
   // start game -> host only waiting room
   $("#start-game").on("click", function () {
     socket.emit("start-game");
@@ -1017,9 +1017,11 @@ window.onload = function () {
           );
         }
       } else {
-        for (let j = 0; j < 4; j++) {
-          const sprite = player_sprites[i][j];
-          sprite.visible = false;
+        if (i < player_sprites.length) {
+          for (let j = 0; j < 4; j++) {
+            const sprite = player_sprites[i][j];
+            sprite.visible = false;
+          }
         }
       }
     }
@@ -1267,5 +1269,42 @@ window.onload = function () {
     );
     viewport.moveCenter(0, 0);
     viewport.setZoom(0.27);
+  });
+
+  // handle chat features
+  let message_history = [];
+
+  // watching message send
+  $("#chat-send").on("click", function () {
+    const message = $("#chat-input").val();
+    if (message.trim() !== "") {
+      socket.emit("send-chat", { message: message });
+    }
+  });
+
+  //watching message recieve
+  socket.on("recieve-chat", (data) => {
+    const message = data.message;
+    const sender = data.username;
+    const uid = data.id;
+    if (message_history.length == 0) {
+      $("#messages").append(`
+      <div class="message-container ${uid == socket.id ? "self" : ""}">
+        <p class="username">${sender.toUpperCase()}</p>
+        <div class="message">
+          <p>${message}</p>
+        </div>
+      </div>`);
+    } else {
+      $("#messages").append(`
+      <div class="message-container ${uid == socket.id ? "self" : ""}">
+        ${message_history[message_history.length - 1].id != uid ? `<p class="username">${sender.toUpperCase()}</p>` : ""}
+        <div class="message">
+          <p>${message}</p>
+        </div>
+      </div>`);
+    }
+
+    message_history.push({ sender: sender, message: message, id: uid });
   });
 };

@@ -34,6 +34,10 @@
    - [x] Add changes to move history  
    - [x] Visually update based on piece data 
  - [ ] In game chat?
+   - [ ] Client-side UI
+   - [ ] Handle server side -> just broadcast to entire room
+   - [ ] Client side -> watch for new messages and add
+   - [ ] Additional options? emojis?
  - [x] Figure out theme
    - [x] Minimliast game theme? 
  - [ ] Possible additions:
