@@ -612,17 +612,20 @@ window.onload = function () {
 
   $("#start").prop("disabled", true);
   $("#join").prop("disabled", true);
+  $("#find").prop("disabled", true);
 
   $("#username").on("input", function () {
     if ($(this).val().length == 0) {
       $("#start").prop("disabled", true);
       $("#join").prop("disabled", true);
+      $("#find").prop("disabled", true);
     } else {
       $("#start").prop("disabled", false);
       $("#join").prop("disabled", false);
+      $("#find").prop("disabled", false);
     }
   });
-
+  
   // Handling waiting room functionality
 
   $("#host-actions-container").hide();
@@ -1054,28 +1057,51 @@ window.onload = function () {
   });
 
   //handle dice roll
+  let spins = 0;
+  const faceRotations = {
+    1: [0, 0],
+    6: [0, 180],
+    2: [0, -90],
+    5: [0, 90],
+    4: [-90, 0],
+    3: [90, 0],
+  };
   $("#roll-dice").on("click", function () {
     dice_roll = Math.floor(Math.random() * 6) + 1;
+    const [rx, ry] = faceRotations[dice_roll];
+
+    spins+=2;
+    $("#die").css(
+      "transform",
+      `rotateX(${rx + spins * 360}deg) rotateY(${ry + spins * 360}deg)`,
+    );
+
     // dice_roll = 6; // debugging purposes
-    $("#dice-result").css("opacity", 0);
-    $("#dice-result").text(dice_roll);
-    $("#dice-result").animate({ opacity: 1 }, 250);
+    // $("#dice-result").css("opacity", 0);
+    // $("#dice-result").text(dice_roll);
+    // $("#dice-result").animate({ opacity: 1 }, 250);
     $(this).prop("disabled", true);
-
-    // check for no possible moves and skip turn if necessary
-    let possible_move = false;
-    for (let i = 0; i < game_data.players[game_data.turn].pieces.length; i++) {
-      if (
-        game_data.players[game_data.turn].pieces[i].status != "home" &&
-        game_data.players[game_data.turn].pieces[i].status != "finished"
+    setTimeout(() => {
+      // check for no possible moves and skip turn if necessary
+      let possible_move = false;
+      for (
+        let i = 0;
+        i < game_data.players[game_data.turn].pieces.length;
+        i++
       ) {
-        possible_move = true;
+        if (
+          game_data.players[game_data.turn].pieces[i].status != "home" &&
+          game_data.players[game_data.turn].pieces[i].status != "finished"
+        ) {
+          possible_move = true;
+        }
       }
-    }
 
-    if (possible_move == false && dice_roll != 6) {
-      socket.emit("skip-turn");
-    }
+      if (possible_move == false && dice_roll != 6) {
+        socket.emit("skip-turn");
+      }
+    }, 1000)
+
   });
   // dynamically create sidebar UI
   const COLORS = ["green", "red", "yellow", "blue"];
@@ -1345,9 +1371,12 @@ window.onload = function () {
   $("#info").on("click", function () {
     $("#guide-container").css("opacity", 0);
     $("#guide-container").css("display", "flex");
-    $("#guide-container").animate({
-      opacity: 1,
-    }, 500);
+    $("#guide-container").animate(
+      {
+        opacity: 1,
+      },
+      500,
+    );
     page = 1;
     $("#g-next").prop("disabled", false);
     $("#g-back").prop("disabled", true);
@@ -1414,18 +1443,22 @@ window.onload = function () {
           "src",
           "./assets/guide/" + GUIDE_PAGES[page - 1].image,
         );
-        $("#gc-row").animate({ opacity: 1}, 250);
+        $("#gc-row").animate({ opacity: 1 }, 250);
       },
     );
   });
 
   // return back to main menu
-  $("#g-return2").on("click", function() {
-    console.log("r")
-    $("#guide-container").animate({
-      opacity:0,
-    }, 500, function() {
-      $("#guide-container").hide();
-    })
-  })
+  $("#g-return2").on("click", function () {
+    console.log("r");
+    $("#guide-container").animate(
+      {
+        opacity: 0,
+      },
+      500,
+      function () {
+        $("#guide-container").hide();
+      },
+    );
+  });
 };

@@ -43,8 +43,9 @@
  - [ ] Possible additions:
    - [ ] User account functionality
    - [ ] Dark mode :)
-   - [ ] How to play guide
-   - [ ] Dice animation
+   - [x] How to play guide
+   - [x] Dice animation
+   - [ ] Chat filtering
    - [ ] Public game finding?
    - [ ] Piece movement animation
    - [ ] Game creation settings -> variants?
@@ -142,4 +143,8 @@ Guide: -> thanks Gemini
    - Guide your planes to their finish lane (e.g., Red planes to the red finish section). To enter the final central finish point (marked by the diamond), you must roll the exact number required to land on it. The first player to finish all 4 planes wins! 
    - Show game summary screen
    
+Game Variants:
+ - Even Launch -> have to roll an event number dice to launch
+ - Home Zone Backtrack -> move piece backwards if its not exact in final path
+ - Triple Six -> Any piece moved during the previous two sixes have to move back to home 
 Apparently negative is up and left and positive is down and right (with center being 0,0) for PIXI.js

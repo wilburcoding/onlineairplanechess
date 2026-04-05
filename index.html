@@ -81,7 +81,15 @@
               Latest Roll
             </p>
             <div id="dice">
-              <p id="dice-result">5</p>
+              <div class="die" id="die">
+                <div class="face front">1</div>
+                <div class="face back">6</div>
+                <div class="face right">2</div>
+                <div class="face left">5</div>
+                <div class="face top">4</div>
+                <div class="face bottom">3</div>
+              </div>
+              <!-- <p id="dice-result">5</p> -->
             </div>
             <button id="roll-dice" disabled>Roll Dice</button>
           </div>
@@ -215,17 +223,25 @@
           </p>
           <div id="image-container">
             <div id="gc-row">
-              <div style="display:flex;align-items: center;justify-content: center;flex-direction: column;width:40%;">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  flex-direction: column;
+                  width: 40%;
+                "
+              >
                 <p>
                   <span id="g-stitle">The Game Board</span>
-                  <br>
+                  <br />
                   <span id="g-count">(1/4)</span>
                 </p>
                 <p id="g-info">
                   something something somethign something something something
                 </p>
               </div>
-              <img src="/assets/guide/p1.png" id="g-img"/>
+              <img src="/assets/guide/p1.png" id="g-img" />
             </div>
             <p id="g-caption"></p>
             <div id="g-controls">
@@ -249,9 +265,10 @@
             style="width: 80%; margin-top: 5px; margin-bottom: 10px"
             placeholder="Enter your username"
           />
-          <button id="start">Start a Game</button>
-          <button id="join">Join a Game</button>
-          <button id="info">How to Play</button>
+          <button id="start"><i class="ph ph-airplane-takeoff"></i> Start a Game</button>
+          <button id="join"><i class="ph ph-arrow-square-out"></i> Join a Game</button>
+          <button id="find"><i class="ph ph-globe"></i> Find a Game</button>
+          <button id="info"><i class="ph ph-book-bookmark"></i> How to Play</button>
         </div>
       </div>
     </div>
