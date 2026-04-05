@@ -47,9 +47,7 @@
           />
           <div id="chat-container">
             <div id="chat-content">
-              <div id="messages">
-
-              </div>
+              <div id="messages"></div>
 
               <div id="chat-input-container">
                 <p id="char-count">0/50</p>
@@ -211,12 +209,31 @@
       <div id="guide-container">
         <div id="guide-content">
           <p id="g-title">How to Play Airplane Chess</p>
-          <p id="g-desc">Airplane Chess is a fun, luck-based board game. Although it seems complicated at first, it's easy to learn to the few simple rules.</p>
+          <p id="g-desc">
+            Airplane Chess is a fun, luck-based board game. Although it seems
+            complicated at first, it's easy to learn with a few simple rules.
+          </p>
           <div id="image-container">
-            <p><span id="g-stitle">The Game Board</span> <span id="g-part">(1/10)</span></p>
-            <img src="/">
+            <div id="gc-row">
+              <div style="display:flex;align-items: center;justify-content: center;flex-direction: column;width:40%;">
+                <p>
+                  <span id="g-stitle">The Game Board</span>
+                  <br>
+                  <span id="g-count">(1/4)</span>
+                </p>
+                <p id="g-info">
+                  something something somethign something something something
+                </p>
+              </div>
+              <img src="/assets/guide/p1.png" id="g-img"/>
+            </div>
             <p id="g-caption"></p>
+            <div id="g-controls">
+              <button id="g-back">Back</button>
+              <button id="g-next">Next</button>
+            </div>
           </div>
+          <button style="margin-top: 15px" id="g-return2">Return</button>
         </div>
       </div>
       <div id="ui-layer">

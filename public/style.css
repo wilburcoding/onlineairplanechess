@@ -113,7 +113,7 @@ p {
   align-items:center;
   flex-direction: column;
   justify-content: center;
-  max-width: 50%;
+  max-width: 70%;
   text-align:center;
 
 }
@@ -133,11 +133,24 @@ p {
 
 #image-container {
   width:90%;
-  height:400px;
+  position:relative;
+  height:500px;
   background-color: #dce4f5;
   padding:10px;
   border-radius:5px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction: column;
 
+}
+
+img {
+  height: 400px;
+  width:50%;
+  margin-bottom:50px;
+  object-fit: cover;
+  
 }
 
 #g-title {
@@ -149,7 +162,7 @@ p {
 }
 
 #g-desc {
-  text-wrap: balance; 
+  text-wrap: balance;
   font-size:20px;
   margin-top:0px;
   margin-bottom:15px;
@@ -159,11 +172,42 @@ p {
 #g-part {
   font-size:18px;
   font-weight:400;
-  
+}
+
+#gc-row {
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+  align-items:center;
+}
+
+#g-controls {
+  display:flex;
+  position: absolute;
+  bottom:10px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+#g-count {
+  font-size:20px;
+}
+
+#g-controls button {
+  margin:0px 10px;
+  font-size:15px;
+  height:40px;
+  width:100px;
+}
+#g-info {
+  font-size:30px;
+  width:100%;
+  margin:10px;
 }
 
 #g-stitle {
-  font-size:18px;
+  font-size:25px;
   font-weight: 700;
 }
 input[type="text"] {

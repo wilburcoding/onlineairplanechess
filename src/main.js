@@ -24,21 +24,25 @@ const GUIDE_PAGES = [
     title: "Setup & Starting",
     description:
       "All 4 planes begin in their hangar. Roll a 6 with the die to move one plane out to the starting track tile of your color. Each player uses unique colored planes",
+    image: "p1.png",
   },
   {
     title: "Flight Path",
     description:
-      "After starting, roll the die to move your planes clockwise. Special Rule: Land on a track tile that matches your plane’s color (e.g., Green plane lands on a green tile) to take a special  boost and jump across sections. There are also even better shortcuts marked by the dotted lines.",
+      "After starting, roll the die to move your planes clockwise. Special Rule: Land on a tile that matches your plane’s color to take a special boost and jump across sections. There are also even better shortcuts marked by the dotted lines.",
+    image: "p2.png",
   },
   {
     title: "Capturing",
     description:
       'If your plane lands exactly on a tile occupied by an opponent, you "capture" them, sending their plane all the way back to their hangar to restart. You can even capture other planes after taking shortcuts, so look out for those opportunities!',
+    image: "p3.png",
   },
   {
     title: "Winning",
     description:
       "Guide your planes to their finish lane (e.g., Red planes to the red finish section). To enter the final central finish point (marked by the diamond), you must roll the exact number required to land on it. The first player to finish all 4 planes wins!",
+    image: "p4.png",
   },
 ];
 const COLORS = ["green", "red", "yellow", "blue"];
@@ -599,6 +603,7 @@ window.onload = function () {
   });
 
   $("#jcontainer").hide();
+  $("#guide-container").hide();
   $("#pixi-overlay").hide();
 
   init().catch((err) => {
@@ -1295,9 +1300,9 @@ window.onload = function () {
   // handle chat features
   let message_history = [];
 
-  $("#chat-input").on("input", function(e) {
+  $("#chat-input").on("input", function (e) {
     $("#char-count").text($(this).val().length + "/50");
-  })
+  });
 
   // watching message send
   $("#chat-send").on("click", function () {
@@ -1334,4 +1339,93 @@ window.onload = function () {
 
     message_history.push({ sender: sender, message: message, id: uid });
   });
+
+  // How to play guide functionality
+  let page = 1;
+  $("#info").on("click", function () {
+    $("#guide-container").css("opacity", 0);
+    $("#guide-container").css("display", "flex");
+    $("#guide-container").animate({
+      opacity: 1,
+    }, 500);
+    page = 1;
+    $("#g-next").prop("disabled", false);
+    $("#g-back").prop("disabled", true);
+    $("#g-stitle").text(GUIDE_PAGES[page - 1].title);
+    $("#g-info").text(GUIDE_PAGES[page - 1].description);
+    $("#g-count").text(page + "/4");
+    $("#g-img").attr("src", "./assets/guide/" + GUIDE_PAGES[page - 1].image);
+  });
+
+  $("#g-next").on("click", function () {
+    page += 1;
+    if (page > 4) {
+      page = 4;
+    }
+
+    if (page == 4) {
+      $("#g-next").prop("disabled", true);
+    } else {
+      $("#g-next").prop("disabled", false);
+    }
+    $("#g-back").prop("disabled", false);
+
+    $("#gc-row").animate(
+      {
+        opacity: 0,
+      },
+      250,
+      function () {
+        $("#g-stitle").text(GUIDE_PAGES[page - 1].title);
+        $("#g-info").text(GUIDE_PAGES[page - 1].description);
+        $("#g-count").text(page + "/4");
+        $("#g-img").attr(
+          "src",
+          "./assets/guide/" + GUIDE_PAGES[page - 1].image,
+        );
+        $("#gc-row").animate({ opacity: 1 }, 250);
+      },
+    );
+  });
+
+  $("#g-back").on("click", function () {
+    page -= 1;
+    if (page < 1) {
+      page = 1;
+    }
+
+    if (page == 1) {
+      $("#g-back").prop("disabled", true);
+    } else {
+      $("#g-back").prop("disabled", false);
+    }
+    $("#g-next").prop("disabled", false);
+
+    $("#gc-row").animate(
+      {
+        opacity: 0,
+      },
+      250,
+      function () {
+        $("#g-stitle").text(GUIDE_PAGES[page - 1].title);
+        $("#g-info").text(GUIDE_PAGES[page - 1].description);
+        $("#g-count").text(page + "/4");
+        $("#g-img").attr(
+          "src",
+          "./assets/guide/" + GUIDE_PAGES[page - 1].image,
+        );
+        $("#gc-row").animate({ opacity: 1}, 250);
+      },
+    );
+  });
+
+  // return back to main menu
+  $("#g-return2").on("click", function() {
+    console.log("r")
+    $("#guide-container").animate({
+      opacity:0,
+    }, 500, function() {
+      $("#guide-container").hide();
+    })
+  })
 };
