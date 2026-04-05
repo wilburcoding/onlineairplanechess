@@ -19,7 +19,28 @@ const socket = io("http://localhost:3001", {
 socket.on("connect", () => {
   console.log("Connected to server with ID:", socket.id);
 });
-
+const GUIDE_PAGES = [
+  {
+    title: "Setup & Starting",
+    description:
+      "All 4 planes begin in their hangar. Roll a 6 with the die to move one plane out to the starting track tile of your color. Each player uses unique colored planes",
+  },
+  {
+    title: "Flight Path",
+    description:
+      "After starting, roll the die to move your planes clockwise. Special Rule: Land on a track tile that matches your plane’s color (e.g., Green plane lands on a green tile) to take a special  boost and jump across sections. There are also even better shortcuts marked by the dotted lines.",
+  },
+  {
+    title: "Capturing",
+    description:
+      'If your plane lands exactly on a tile occupied by an opponent, you "capture" them, sending their plane all the way back to their hangar to restart. You can even capture other planes after taking shortcuts, so look out for those opportunities!',
+  },
+  {
+    title: "Winning",
+    description:
+      "Guide your planes to their finish lane (e.g., Red planes to the red finish section). To enter the final central finish point (marked by the diamond), you must roll the exact number required to land on it. The first player to finish all 4 planes wins!",
+  },
+];
 const COLORS = ["green", "red", "yellow", "blue"];
 const COLOR_HEX = [0xfb9a8, 0xee6c4d, 0xf4d35e, 0x4e7dba];
 const COORDS = {}; // keep track of coords for specific location to make it easy to use in the future
@@ -514,19 +535,19 @@ async function init() {
     // TODO: Add circles
   }
   //debugging coords
-  const style = new TextStyle({
-    fontFamily: "Arial",
-    fontSize: 36,
-    fill: "0x000000",
-    wordWrap: true,
-    wordWrapWidth: 400,
-  });
-  for (let key of Object.keys(COORDS)) {
-    const text = new Text({ text: key, style: style });
-    text.x = COORDS[key][0] - 35;
-    text.y = COORDS[key][1] - 25;
-    viewport.addChild(text);
-  }
+  // const style = new TextStyle({
+  //   fontFamily: "Arial",
+  //   fontSize: 36,
+  //   fill: "0x000000",
+  //   wordWrap: true,
+  //   wordWrapWidth: 400,
+  // });
+  // for (let key of Object.keys(COORDS)) {
+  //   const text = new Text({ text: key, style: style });
+  //   text.x = COORDS[key][0] - 35;
+  //   text.y = COORDS[key][1] - 25;
+  //   viewport.addChild(text);
+  // }
 
   app.stage.addChild(viewport);
   viewport.drag().pinch().wheel().decelerate();
@@ -1274,11 +1295,17 @@ window.onload = function () {
   // handle chat features
   let message_history = [];
 
+  $("#chat-input").on("input", function(e) {
+    $("#char-count").text($(this).val().length + "/50");
+  })
+
   // watching message send
   $("#chat-send").on("click", function () {
     const message = $("#chat-input").val();
     if (message.trim() !== "") {
       socket.emit("send-chat", { message: message });
+      $("#chat-input").val("");
+      $("#char-count").text("0/50");
     }
   });
 

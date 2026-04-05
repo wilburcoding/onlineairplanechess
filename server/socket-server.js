@@ -207,7 +207,8 @@ export const initSocket = (httpServer) => {
             };
             for (let j = 0; j < 4; j++) {
               room.players[i].pieces.push({
-                status: j < 3 ? "finished" : "home", // debugging only
+                // status: j < 0 ? "finished" : "home", // debugging only
+                status: "home",
                 location:
                   room.players[i].color.substring(0, 1).toUpperCase() + "-" + j,
               });

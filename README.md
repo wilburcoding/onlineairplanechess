@@ -34,15 +34,16 @@
    - [x] Add changes to move history  
    - [x] Visually update based on piece data 
  - [ ] In game chat?
-   - [ ] Client-side UI
-   - [ ] Handle server side -> just broadcast to entire room
-   - [ ] Client side -> watch for new messages and add
-   - [ ] Additional options? emojis?
+   - [x] Client-side UI
+   - [x] Handle server side -> just broadcast to entire room
+   - [x] Client side -> watch for new messages and add
+   - [ ] Additional options? reactions? 
  - [x] Figure out theme
    - [x] Minimliast game theme? 
  - [ ] Possible additions:
    - [ ] User account functionality
    - [ ] Dark mode :)
+   - [ ] How to play guide
    - [ ] Dice animation
    - [ ] Public game finding?
    - [ ] Piece movement animation
@@ -127,4 +128,18 @@ Room Logic
      - Emit to all users
      - Show results and return to home screen
 
+Guide: -> thanks Gemini
+ - Setup & Starting
+   - All 4 planes begin in their hangar. Roll a 6 with the die to move one plane out to the starting track tile of your color. Each player uses unique colored planes
+   - Zoomed in image of hangar
+ - Flight Path
+   - After starting, roll the die to move your planes clockwise. Special Rule: Land on a track tile that matches your plane’s color (e.g., Green plane lands on a green tile) to take a special  boost and jump across sections. There are also even better shortcuts marked by the dotted lines. 
+   - Labeled shortcuts on map
+ - Capturing
+   - Labeled diagram of showing capturing + returning to hangar
+   - If your plane lands exactly on a tile occupied by an opponent, you "capture" them, sending their plane all the way back to their hangar to restart.
+ - Reaching Home
+   - Guide your planes to their finish lane (e.g., Red planes to the red finish section). To enter the final central finish point (marked by the diamond), you must roll the exact number required to land on it. The first player to finish all 4 planes wins! 
+   - Show game summary screen
+   
 Apparently negative is up and left and positive is down and right (with center being 0,0) for PIXI.js

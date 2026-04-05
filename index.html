@@ -48,23 +48,15 @@
           <div id="chat-container">
             <div id="chat-content">
               <div id="messages">
-                <div class="message-container">
-                  <p class="username">PLAYER 1</p>
-                  <div class="message">
-                    <p>Hello</p>
-                  </div>
-                </div>
-                <div class="message-container" style="margin-left:auto;margin-right:4px;">
-                  <p class="username">PLAYER 1</p>
-                  <div class="message">
-                    <p>Hello</p>
-                  </div>
-                </div>
+
               </div>
+
               <div id="chat-input-container">
+                <p id="char-count">0/50</p>
                 <input
                   type="text"
                   id="chat-input"
+                  maxlength="50"
                   placeholder="Type a message..."
                 />
                 <button id="chat-send">
@@ -216,6 +208,17 @@
           <p id="message"></p>
         </div>
       </div>
+      <div id="guide-container">
+        <div id="guide-content">
+          <p id="g-title">How to Play Airplane Chess</p>
+          <p id="g-desc">Airplane Chess is a fun, luck-based board game. Although it seems complicated at first, it's easy to learn to the few simple rules.</p>
+          <div id="image-container">
+            <p><span id="g-stitle">The Game Board</span> <span id="g-part">(1/10)</span></p>
+            <img src="/">
+            <p id="g-caption"></p>
+          </div>
+        </div>
+      </div>
       <div id="ui-layer">
         <div id="ui-container">
           <h1 style="margin-bottom: 0px">Online Airplane Chess</h1>
@@ -231,6 +234,7 @@
           />
           <button id="start">Start a Game</button>
           <button id="join">Join a Game</button>
+          <button id="info">How to Play</button>
         </div>
       </div>
     </div>
