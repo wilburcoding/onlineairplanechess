@@ -117,6 +117,40 @@
         </div>
         <div id="waiting-room-container">
           <div id="waiting-room">
+            <div id="settings-container">
+              <button id="wr-settings-close"><i class="ph ph-x"></i></button>
+              <div id="settings-content">
+                <p class="section-header">General Settings</p>
+                <hr />
+                <div class="setting-row">
+                  <p>Visibility</p>
+                  <button>Private</button>
+                </div>
+                <div class="setting-row">
+                  <p>Visibility</p>
+                  <button>Private</button>
+                </div>
+                <p class="section-header">Modifications</p>
+                <hr />
+                <div class="setting-row">
+                  <div class="setting-subcontainer">
+                    <h1>Even Launch</h1>
+                    <p>Roll an event number dice to launch</p>
+                  </div>
+                  <button id="">Disabled</button>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-subcontainer">
+                    <h1>Home Zone Backtrack</h1>
+                    <p>
+                      Player backtrack in home zones if they don't roll exact
+                      numbers
+                    </p>
+                  </div>
+                  <button>Enabled</button>
+                </div>
+              </div>
+            </div>
             <button id="wr-settings"><i class="ph ph-gear"></i></button>
             <h1>Waiting for Players...</h1>
             <p style="margin-top: 0px; margin-bottom: 10px">
@@ -266,10 +300,16 @@
             style="width: 80%; margin-top: 5px; margin-bottom: 10px"
             placeholder="Enter your username"
           />
-          <button id="start"><i class="ph ph-airplane-takeoff"></i> Start a Game</button>
-          <button id="join"><i class="ph ph-arrow-square-out"></i> Join a Game</button>
+          <button id="start">
+            <i class="ph ph-airplane-takeoff"></i> Start a Game
+          </button>
+          <button id="join">
+            <i class="ph ph-arrow-square-out"></i> Join a Game
+          </button>
           <button id="find"><i class="ph ph-globe"></i> Find a Game</button>
-          <button id="info"><i class="ph ph-book-bookmark"></i> How to Play</button>
+          <button id="info">
+            <i class="ph ph-book-bookmark"></i> How to Play
+          </button>
         </div>
       </div>
     </div>

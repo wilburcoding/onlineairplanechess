@@ -605,6 +605,7 @@ window.onload = function () {
   $("#jcontainer").hide();
   $("#guide-container").hide();
   $("#pixi-overlay").hide();
+  $("#settings-container").hide();
 
   init().catch((err) => {
     console.error("Error initializing PIXI.js graphics:", err);
@@ -662,6 +663,7 @@ window.onload = function () {
 
   let wroom_data = null;
   $("#join-button").on("click", function () {
+
     if ($("#joincode").val().length === 6) {
       socket.emit(
         "join-room",
@@ -682,6 +684,7 @@ window.onload = function () {
                 $("#ui-layer").hide();
               },
             );
+            $("#wr-settings").hide();
             $("#pixi-overlay").css("opacity", 0);
             $("#pixi-overlay").show();
             $("#sidebar-left").hide();
@@ -848,6 +851,7 @@ window.onload = function () {
   socket.on("game-start", (room_data) => {
     game_data = room_data;
     $("#waiting-room-container").hide();
+    $("#wr-settings").show()
     $("#sidebar-left").show();
     $("#sidebar-right").show();
     viewport.animate({
@@ -1461,4 +1465,22 @@ window.onload = function () {
       },
     );
   });
+
+  // Handle waiing room settings functionality (HOST ONLY)
+  $("#wr-settings").on("click", function() {
+    $("#settings-container").css("opacity", 0);
+    $("#settings-container").css("display", "flex");
+    $("#settings-container").animate({
+      opacity:1,
+    }, 250);
+  })
+
+  $("#wr-settings-close").on("click", function() {
+    $("#settings-container").animate({
+      opacity:0,
+    }, 250, function() {
+      $("#settings-container").hide();
+    })
+  })
+
 };
