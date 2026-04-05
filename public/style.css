@@ -295,6 +295,7 @@ canvas {
   color: black;
   z-index: 450;
   pointer-events: all;
+  position: relative;
 }
 
 button:disabled {
@@ -990,4 +991,24 @@ button:disabled {
 }
 .bottom {
   transform: rotateX(-90deg) translateZ(40px);
+}
+
+#wr-settings {
+  height:35px;
+  width:35px;
+  background-color: transparent;
+  position:absolute;
+  top:10px;
+  font-size:30px;
+  right:10px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:black;
+  transition-duration: 0.3s;
+}
+
+#wr-settings:hover {
+  transform: rotateZ(90deg);
+
 }
