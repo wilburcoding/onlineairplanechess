@@ -183,7 +183,7 @@ export const initSocket = (httpServer) => {
     const COLORS = ["green", "red", "yellow", "blue"];
 
     //handle game start from host
-    socket.on("start-game", () => {
+    socket.on("start-game", (settings) => {
       console.log(rooms);
       let room = Object.values(rooms).find((r) =>
         r.players.some((p) => p.id === uid),
@@ -196,6 +196,8 @@ export const initSocket = (httpServer) => {
           room.tcount = 0;
           room.update = true;
           room.history = [];
+          room.settings = settings;
+          console.log(room.settings);
           for (let i = 0; i < room.players.length; i++) {
             room.players[i].color = COLORS[i];
             room.players[i].pieces = [];

@@ -626,15 +626,26 @@ window.onload = function () {
       $("#find").prop("disabled", false);
     }
   });
-  
+
   // Handling waiting room functionality
 
   $("#host-actions-container").hide();
   $("#non-host-actions-container").hide();
   $("#game-results").hide();
-
+  let settings_data = {
+    visibility: "private",
+    max_players: 4,
+    even_launch: false,
+    home_backtrack: true,
+  };
   // start button -> home screen
   $("#start").on("click", function () {
+    settings_data = {
+      visibility: "private",
+      max_players: 4,
+      even_launch: false,
+      home_backtrack: true,
+    };
     $("#ui-layer").animate(
       {
         opacity: 0,
@@ -663,7 +674,6 @@ window.onload = function () {
 
   let wroom_data = null;
   $("#join-button").on("click", function () {
-
     if ($("#joincode").val().length === 6) {
       socket.emit(
         "join-room",
@@ -840,10 +850,9 @@ window.onload = function () {
       },
     );
   });
-
   // start game -> host only waiting room
   $("#start-game").on("click", function () {
-    socket.emit("start-game");
+    socket.emit("start-game", settings_data);
   });
   let player_sprites = [];
   let game_data = null;
@@ -851,7 +860,7 @@ window.onload = function () {
   socket.on("game-start", (room_data) => {
     game_data = room_data;
     $("#waiting-room-container").hide();
-    $("#wr-settings").show()
+    $("#wr-settings").show();
     $("#sidebar-left").show();
     $("#sidebar-right").show();
     viewport.animate({
@@ -1074,7 +1083,7 @@ window.onload = function () {
     dice_roll = Math.floor(Math.random() * 6) + 1;
     const [rx, ry] = faceRotations[dice_roll];
 
-    spins+=2;
+    spins += 2;
     $("#die").css(
       "transform",
       `rotateX(${rx + spins * 360}deg) rotateY(${ry + spins * 360}deg)`,
@@ -1104,8 +1113,7 @@ window.onload = function () {
       if (possible_move == false && dice_roll != 6) {
         socket.emit("skip-turn");
       }
-    }, 1000)
-
+    }, 1000);
   });
   // dynamically create sidebar UI
   const COLORS = ["green", "red", "yellow", "blue"];
@@ -1467,20 +1475,58 @@ window.onload = function () {
   });
 
   // Handle waiing room settings functionality (HOST ONLY)
-  $("#wr-settings").on("click", function() {
+  $("#wr-settings").on("click", function () {
     $("#settings-container").css("opacity", 0);
     $("#settings-container").css("display", "flex");
-    $("#settings-container").animate({
-      opacity:1,
-    }, 250);
-  })
+    $("#settings-container").animate(
+      {
+        opacity: 1,
+      },
+      250,
+    );
+  });
 
-  $("#wr-settings-close").on("click", function() {
-    $("#settings-container").animate({
-      opacity:0,
-    }, 250, function() {
-      $("#settings-container").hide();
-    })
-  })
+  $("#wr-settings-close").on("click", function () {
+    $("#settings-container").animate(
+      {
+        opacity: 0,
+      },
+      250,
+      function () {
+        $("#settings-container").hide();
+      },
+    );
+  });
 
+  $("#s-visibility").on("click", function () {
+    if (settings_data.visibility == "private") {
+      settings_data.visibility = "public";
+      $("#s-visibility").html("Public");
+    } else {
+      settings_data.visibility = "private";
+      $("#s-visibility").html("Private");
+    }
+  });
+
+  $("#s-max-players").on("click", function () {
+    settings_data.max_players += 1;
+    if (settings_data.max_players > 4) {
+      settings_data.max_players = 2;
+    }
+    $("#s-max-players").html(settings_data.max_players);
+  });
+
+  $("#s-even-launch").on("click", function () {
+    settings_data.even_launch = !settings_data.even_launch;
+    $("#s-even-launch").html(
+      settings_data.even_launch ? "Enabled" : "Disabled",
+    );
+  });
+
+  $("#s-homezone").on("click", function () {
+    settings_data.home_backtrack = !settings_data.home_backtrack;
+    $("#s-homezone").html(
+      settings_data.home_backtrack ? "Enabled" : "Disabled",
+    );
+  });
 };
