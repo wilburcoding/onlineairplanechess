@@ -902,7 +902,9 @@ window.onload = function () {
             // make sure its the right players turn and they have rolled the dice and they are clicking on their own piece
             if (game_data.players[i].pieces[j].status == "home") {
               // need a six to get out
-              if (dice_roll == 6) {
+              console.log(game_data.settings.even_launch ? [2, 4, 6] : [6]);
+              console.log("----------")
+              if ((game_data.settings.even_launch ? [2,4,6] : [6]).includes(dice_roll)) {
                 socket.emit("move-piece", {
                   piece: j,
                   player: i,
@@ -1110,7 +1112,10 @@ window.onload = function () {
         }
       }
 
-      if (possible_move == false && dice_roll != 6) {
+      if (
+        possible_move == false &&
+        !(game_data.settings.even_launch ? [2, 4, 6] : [6])
+          .includes(dice_roll)) {
         socket.emit("skip-turn");
       }
     }, 1000);

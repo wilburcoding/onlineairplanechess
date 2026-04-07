@@ -562,11 +562,15 @@ export const initSocket = (httpServer) => {
             check_win(io, room);
           } else if (loc_type.includes("H")) {
             // hangar path
-            if (loc_num > 5) {
+            if (loc_num > 5 && room.settings.home_backtrack) {
               loc_num = 6 - (loc_num - 6);
+              console.log("backtracked")
             }
-            if (loc_num == 6) {
+            if (loc_num == 6 || (loc_num > 5 && !room.settings.home_backtrack)) {
               // finish
+              if (loc_num > 5 && room.settings.home_backtrack) {
+                console.log("piece finished without backtracking")
+              }
               room.players[player_index].pieces[piece_index].status =
                 "finished";
               room.players[player_index].pieces[piece_index].location =
