@@ -48,7 +48,8 @@
    - [ ] Chat filtering
    - [ ] Public game finding?
    - [ ] Piece movement animation
-   - [ ] Game creation settings -> variants?
+   - [x] Game creation settings -> variants?
+   - [ ] Toast messages 
  - [ ] Issues
    - [ ] Disappearing piece issue?? idk man
    - [x] Weird piece count when moving past 52
@@ -147,4 +148,5 @@ Game Variants:
  - Even Launch -> have to roll an event number dice to launch
  - Home Zone Backtrack -> move piece backwards if its not exact in final path
  - Triple Six -> Any piece moved during the previous two sixes have to move back to home 
+   - Low Priority -> not a huge difference 
 Apparently negative is up and left and positive is down and right (with center being 0,0) for PIXI.js
