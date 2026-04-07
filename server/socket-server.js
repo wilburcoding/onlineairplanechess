@@ -131,11 +131,33 @@ export const initSocket = (httpServer) => {
         code: generate_room_code(),
         players: [{ id: uid, username: data.username }],
         state: "waiting",
+        settings: {
+          visibility: "private",
+          max_players: 4,
+          even_launch: false,
+          home_backtrack: true,
+        }
       };
       rooms[room_data.id] = room_data;
       socket.join(room_data.id);
       socket.emit("waiting-room-update", room_data);
     });
+
+    // settings update
+    socket.on("update-settings", (data) => {
+      let room = Object.values(rooms).find((r) => r.players.some((p) => p.id === uid));
+      if (room) {
+        room.settings = data;
+        for (let i = 0; i < room.players.length;i++) {
+          if (i >= room.settings.max_players) {
+            // remove extra players if max player count is changed
+            room.players = room.players.slice(0, room.settings.max_players);
+            io.to(room.id).emit("waiting-room-update", room);
+            break;          
+          }
+        }
+      }
+    })
 
     socket.on("leave-room", () => {
       let room = Object.values(rooms).find((r) =>
@@ -165,7 +187,7 @@ export const initSocket = (httpServer) => {
     socket.on("join-room", (data, callback) => {
       let room = Object.values(rooms).find((r) => r.code === data.room_code);
       if (room) {
-        if (room.players.length >= 4) {
+        if (room.players.length >= room.settings.max_players) {
           callback({ message: "The room you are trying to join is full." });
           return;
         }
@@ -183,7 +205,7 @@ export const initSocket = (httpServer) => {
     const COLORS = ["green", "red", "yellow", "blue"];
 
     //handle game start from host
-    socket.on("start-game", (settings) => {
+    socket.on("start-game", () => {
       console.log(rooms);
       let room = Object.values(rooms).find((r) =>
         r.players.some((p) => p.id === uid),
@@ -196,8 +218,6 @@ export const initSocket = (httpServer) => {
           room.tcount = 0;
           room.update = true;
           room.history = [];
-          room.settings = settings;
-          console.log(room.settings);
           for (let i = 0; i < room.players.length; i++) {
             room.players[i].color = COLORS[i];
             room.players[i].pieces = [];

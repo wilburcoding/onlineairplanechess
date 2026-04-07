@@ -638,7 +638,7 @@ window.onload = function () {
     even_launch: false,
     home_backtrack: true,
   };
-  // start button -> home screen
+  // start button -> home sc  reen
   $("#start").on("click", function () {
     settings_data = {
       visibility: "private",
@@ -776,6 +776,33 @@ window.onload = function () {
         $("#w-p" + (i + 1) + "-name").text("Waiting...");
       }
     }
+
+    // check if player was kicked
+    if (
+      room_data.players.filter((player) => player.id == socket.id).length == 0
+    ) {
+      // return to home screen
+      $("#host-actions-container").hide();
+      $("#non-host-actions-container").hide();
+      $("#ui-layer").show();
+      $("#ui-layer").animate(
+        {
+          opacity: 1,
+        },
+        250,
+      );
+      $("#pixi-overlay").animate(
+        {
+          opacity: 0,
+        },
+        250,
+        function () {
+          $("#pixi-overlay").hide();
+          $("#sidebar-left").show();
+          $("#sidebar-right").show();
+        },
+      );
+    }
   });
 
   //copy code
@@ -852,7 +879,7 @@ window.onload = function () {
   });
   // start game -> host only waiting room
   $("#start-game").on("click", function () {
-    socket.emit("start-game", settings_data);
+    socket.emit("start-game");
   });
   let player_sprites = [];
   let game_data = null;
@@ -903,8 +930,12 @@ window.onload = function () {
             if (game_data.players[i].pieces[j].status == "home") {
               // need a six to get out
               console.log(game_data.settings.even_launch ? [2, 4, 6] : [6]);
-              console.log("----------")
-              if ((game_data.settings.even_launch ? [2,4,6] : [6]).includes(dice_roll)) {
+              console.log("----------");
+              if (
+                (game_data.settings.even_launch ? [2, 4, 6] : [6]).includes(
+                  dice_roll,
+                )
+              ) {
                 socket.emit("move-piece", {
                   piece: j,
                   player: i,
@@ -1114,8 +1145,8 @@ window.onload = function () {
 
       if (
         possible_move == false &&
-        !(game_data.settings.even_launch ? [2, 4, 6] : [6])
-          .includes(dice_roll)) {
+        !(game_data.settings.even_launch ? [2, 4, 6] : [6]).includes(dice_roll)
+      ) {
         socket.emit("skip-turn");
       }
     }, 1000);
@@ -1511,6 +1542,7 @@ window.onload = function () {
       settings_data.visibility = "private";
       $("#s-visibility").html("Private");
     }
+    socket.emit("update-settings", settings_data);
   });
 
   $("#s-max-players").on("click", function () {
@@ -1519,6 +1551,7 @@ window.onload = function () {
       settings_data.max_players = 2;
     }
     $("#s-max-players").html(settings_data.max_players);
+    socket.emit("update-settings", settings_data);
   });
 
   $("#s-even-launch").on("click", function () {
@@ -1526,6 +1559,7 @@ window.onload = function () {
     $("#s-even-launch").html(
       settings_data.even_launch ? "Enabled" : "Disabled",
     );
+    socket.emit("update-settings", settings_data);
   });
 
   $("#s-homezone").on("click", function () {
@@ -1533,5 +1567,6 @@ window.onload = function () {
     $("#s-homezone").html(
       settings_data.home_backtrack ? "Enabled" : "Disabled",
     );
+    socket.emit("update-settings", settings_data);
   });
 };
