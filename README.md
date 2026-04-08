@@ -49,7 +49,7 @@
    - [ ] Public game finding?
    - [ ] Piece movement animation
    - [x] Game creation settings -> variants?
-   - [ ] Toast messages 
+   - [x] Toast messages 
  - [ ] Issues
    - [ ] Disappearing piece issue?? idk man
    - [x] Weird piece count when moving past 52

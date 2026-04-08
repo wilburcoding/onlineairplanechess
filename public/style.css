@@ -454,10 +454,11 @@ button:disabled {
   position: absolute;
   bottom:0px;
   right:0px;
-  font-size:20px;
+  font-size:18px;
   display:flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
   z-index:1000;
   width:300px;
   color:black;

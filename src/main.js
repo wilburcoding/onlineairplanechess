@@ -248,6 +248,33 @@ function create_tri(i, coord, viewport, color, type = "normal", tag) {
   viewport.addChild(tri);
   viewport.addChild(circle);
 }
+
+$("#message-container").hide();
+function toast_message(message) {
+  $("#message-content").html(message);
+  $("#message-container").css("opacity", 0);
+  $("#message-container").show();
+  $("#message-container").animate(
+    {
+      opacity: 1,
+    },
+    400,
+  );
+  setTimeout(() => {
+    $("#message-container").animate(
+      {
+        opacity: 0,
+      },
+      400,
+      function () {
+        $("#message-container").hide();
+      },
+    );
+  }, 4000);
+}
+
+// toast_message("Testing message! soething something something something something"); //debugging
+
 async function init() {
   // Create a new application
   app = new Application();
@@ -684,7 +711,7 @@ window.onload = function () {
         (callback) => {
           if (callback.message == "success") {
             // successfully joined room
-            console.log("Successfully joined room");
+            toast_message("Successfully joined room with code <strong>" + $("#joincode").val() + "</strong>");  
             $("#ui-layer").animate(
               {
                 opacity: 0,
@@ -802,6 +829,7 @@ window.onload = function () {
           $("#sidebar-right").show();
         },
       );
+      toast_message("You have been removed from the room by the host")
     }
   });
 
