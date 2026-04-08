@@ -116,7 +116,8 @@ p {
 }
 
 #jcontainer,
-#guide-container {
+#guide-container,
+#find-container {
   display: flex;
   position: absolute;
   top: 0;
@@ -141,6 +142,20 @@ p {
   justify-content: center;
   max-width: 70%;
   text-align: center;
+}
+
+#find-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  color: black;
+  display: flex;
+  position: relative;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width:50%;
+  min-height:30%;
 }
 
 #join-container {
@@ -452,20 +467,20 @@ button:disabled {
 
 #message-container {
   position: absolute;
-  bottom:0px;
-  right:0px;
-  font-size:18px;
-  display:flex;
+  bottom: 0px;
+  right: 0px;
+  font-size: 18px;
+  display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  z-index:1000;
-  width:300px;
-  color:black;
-  border-radius:5px;
-  padding:10px;
+  z-index: 1000;
+  width: 300px;
+  color: black;
+  border-radius: 5px;
+  padding: 10px;
   background-color: white;
-  margin:10px;
+  margin: 10px;
 }
 #dice-result {
   font-size: 110px;
@@ -1025,7 +1040,8 @@ button:disabled {
   transform: rotateX(-90deg) translateZ(40px);
 }
 
-#wr-settings, #wr-settings-close {
+#wr-settings,
+#wr-settings-close {
   height: 35px;
   width: 35px;
   background-color: transparent;
@@ -1056,71 +1072,122 @@ button:disabled {
   width: 600px;
   height: 400px;
   padding: 20px;
-  top:0;
-  position:absolute;
-  left:0;
-  border-radius:10px;
+  top: 0;
+  position: absolute;
+  left: 0;
+  border-radius: 10px;
   /* background-color: rgba(68, 68, 68, 0.405); */
   background-color: white;
   z-index: 700;
 }
 
 #settings-content {
-  background-color:white;
-  padding:10px;
-
+  background-color: white;
+  padding: 10px;
 }
 
 .setting-row {
-  width:400px;
+  width: 400px;
   background-color: #dce4f5;
-  padding:10px 15px;
-  border-radius:5px;
-  font-size:20px;
-  font-weight:700;
-  margin:5px;
-  display:flex;
-  flex-direction:row;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 5px;
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
 
 .setting-row button {
-  height:35px;
-  width:150px;
-  font-size:20px;
+  height: 35px;
+  width: 150px;
+  font-size: 20px;
 }
 
 #settings-content hr {
-  width:100%;
+  width: 100%;
 }
 
 #settings-content .section-header {
-  font-size:25px;
-  margin-top:20px;
+  font-size: 25px;
+  margin-top: 20px;
 }
 
 .setting-subcontainer {
-  display:flex;
-  flex-direction:column;
-  max-width:100%;
-  width:60%;
-  margin-top:4px;
-  margin-bottom:4px;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  width: 60%;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 .setting-subcontainer h1 {
-  font-size:18px;
-  font-weight:800;
-  line-height:15px;
-  margin-top:0px;
-  margin-bottom:0px;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 15px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 .setting-subcontainer p {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 13px;
+  margin-top: 4px;
+  margin-bottom: 0px;
+}
+
+.find-card {
+  display:flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #dce4f5;
+  padding:10px 15px;
+  border-radius: 5px;
+  width:70%;
+}
+
+#find-list {
+  width:100%;
+  display:flex;
+  margin-top:10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.find-player-count {
   font-size:14px;
-  font-weight:400;
-  line-height:13px;
-  margin-top:4px;
-  margin-bottom:0px;
+  background-color: #4e7dba;
+  color: white;
+  padding: 3px 7px;
+  margin: 0 10px;
+  border-radius:10px;
+}
+
+.find-name {
+  font-size:22px;
+}
+
+.find-card button {
+  height:35px;
+  font-size:17px;
+}
+
+#find-close {
+  position: absolute;
+  top:0;
+  right:0;
+  font-size:25px;
+  color:black;
+  margin:10px;
+  transition-duration: 0.3s;
+}
+
+#find-close:hover {
+  transform: rotateZ(90deg);
 }
