@@ -84,7 +84,7 @@ export const initSocket = (httpServer) => {
               room.message =
                 "The host has left the game. The game has ended, see the results below.";
               io.to(room.id).emit("game-end-sudden", room);
-              delete rooms[room.id]
+              delete rooms[room.id];
             } else {
               // not host -> remove player from room and update
               // update turn
@@ -106,19 +106,26 @@ export const initSocket = (httpServer) => {
             room.message =
               "There are not enough players to continue. The game has ended, see the results below.";
             io.to(room.id).emit("game-end-sudden", room);
-            delete rooms[room.id]
+            delete rooms[room.id];
           }
         } else {
           if (room.players[0].id === uid) {
             // is host -> delete room and emit update to everyone in room
             room.players = [];
             io.to(room.id).emit("waiting-room-update", room);
-            delete rooms[room.id]
+            delete rooms[room.id];
           } else {
             // not host -> remove player from room
             room.players = room.players.filter((p) => p.id !== uid);
             io.to(room.id).emit("waiting-room-update", room);
           }
+
+          let public_rooms = Object.values(rooms)
+            .filter(
+              (r) => r.settings.visibility == "public" && r.state == "waiting",
+            )
+            .map((r) => r);
+          socket.broadcast.emit("public-rooms-update", public_rooms);
         }
       } else {
         // do nothing
@@ -136,28 +143,42 @@ export const initSocket = (httpServer) => {
           max_players: 4,
           even_launch: false,
           home_backtrack: true,
-        }
+        },
       };
       rooms[room_data.id] = room_data;
       socket.join(room_data.id);
       socket.emit("waiting-room-update", room_data);
+      let public_rooms = Object.values(rooms)
+        .filter(
+          (r) => r.settings.visibility == "public" && r.state == "waiting",
+        )
+        .map((r) => r);
+      socket.broadcast.emit("public-rooms-update", public_rooms);
     });
 
     // settings update
     socket.on("update-settings", (data) => {
-      let room = Object.values(rooms).find((r) => r.players.some((p) => p.id === uid));
+      let room = Object.values(rooms).find((r) =>
+        r.players.some((p) => p.id === uid),
+      );
       if (room) {
         room.settings = data;
-        for (let i = 0; i < room.players.length;i++) {
+        for (let i = 0; i < room.players.length; i++) {
           if (i >= room.settings.max_players) {
             // remove extra players if max player count is changed
             room.players = room.players.slice(0, room.settings.max_players);
             io.to(room.id).emit("waiting-room-update", room);
-            break;          
+            break;
           }
         }
       }
-    })
+      let public_rooms = Object.values(rooms)
+        .filter(
+          (r) => r.settings.visibility == "public" && r.state == "waiting",
+        )
+        .map((r) => r);
+      socket.broadcast.emit("public-rooms-update", public_rooms);
+    });
 
     socket.on("leave-room", () => {
       let room = Object.values(rooms).find((r) =>
@@ -181,6 +202,12 @@ export const initSocket = (httpServer) => {
           }
         }
       }
+      let public_rooms = Object.values(rooms)
+        .filter(
+          (r) => r.settings.visibility == "public" && r.state == "waiting",
+        )
+        .map((r) => r);
+      socket.broadcast.emit("public-rooms-update", public_rooms);
     });
 
     // handle joining rooms
@@ -201,12 +228,17 @@ export const initSocket = (httpServer) => {
           message: "Your game code is invalid. Please check and try again.",
         });
       }
+      let public_rooms = Object.values(rooms)
+        .filter(
+          (r) => r.settings.visibility == "public" && r.state == "waiting",
+        )
+        .map((r) => r);
+      socket.broadcast.emit("public-rooms-update", public_rooms);
     });
     const COLORS = ["green", "red", "yellow", "blue"];
 
     //handle game start from host
     socket.on("start-game", () => {
-      console.log(rooms);
       let room = Object.values(rooms).find((r) =>
         r.players.some((p) => p.id === uid),
       );
@@ -240,6 +272,12 @@ export const initSocket = (httpServer) => {
         }
         io.to(room.id).emit("game-update", room);
       }
+      let public_rooms = Object.values(rooms)
+        .filter(
+          (r) => r.settings.visibility == "public" && r.state == "waiting",
+        )
+        .map((r) => r);
+      socket.broadcast.emit("public-rooms-update", public_rooms);
     });
 
     //skip turn
@@ -584,12 +622,15 @@ export const initSocket = (httpServer) => {
             // hangar path
             if (loc_num > 5 && room.settings.home_backtrack) {
               loc_num = 6 - (loc_num - 6);
-              console.log("backtracked")
+              console.log("backtracked");
             }
-            if (loc_num == 6 || (loc_num > 5 && !room.settings.home_backtrack)) {
+            if (
+              loc_num == 6 ||
+              (loc_num > 5 && !room.settings.home_backtrack)
+            ) {
               // finish
               if (loc_num > 5 && room.settings.home_backtrack) {
-                console.log("piece finished without backtracking")
+                console.log("piece finished without backtracking");
               }
               room.players[player_index].pieces[piece_index].status =
                 "finished";
@@ -629,15 +670,17 @@ export const initSocket = (httpServer) => {
     // handle new chat message
     socket.on("send-chat", (data) => {
       console.log(data);
-      let room = Object.values(rooms).find((r) => r.players.some((p) => p.id === uid));
+      let room = Object.values(rooms).find((r) =>
+        r.players.some((p) => p.id === uid),
+      );
       if (room) {
         io.to(room.id).emit("recieve-chat", {
           username: room.players.find((p) => p.id === uid).username,
           message: data.message,
           id: uid,
-        })
+        });
       }
-    })
+    });
   });
 
   return io;

@@ -1597,4 +1597,43 @@ window.onload = function () {
     );
     socket.emit("update-settings", settings_data);
   });
+
+  // handle public game finding
+
+  $("#find-container").hide();
+  
+  $("#find").on("click", function() {
+    $("#find-container").css("opacity", 0);
+    $("#find-container").css("display", "flex");
+    $("#find-container").animate(
+      {
+        opacity: 1,
+      },
+      500,
+    );
+
+                // <div class="find-card">
+                //   <p class="find-name">
+                //     <strong>
+                //       <span id="find-name-span">Player 1</span>
+                //     </strong>
+                //     's Game
+                //   </p>
+                //   <div class="find-player-count">
+                //     <p>2/4 Players</p>
+                //   </div>
+                //   <button style="margin-right:0px;margin-left:auto;">
+                //     Join Game
+                //   </button>
+                // </div>;
+  })
+
+  $("#find-close").on("click", function() {
+    $("#find-container").animate({
+      opacity:0,
+    }, 500, function() {
+      $("#find-container").hide();
+
+    })
+  })
 };
