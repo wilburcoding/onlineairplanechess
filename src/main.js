@@ -711,7 +711,11 @@ window.onload = function () {
         (callback) => {
           if (callback.message == "success") {
             // successfully joined room
-            toast_message("Successfully joined room with code <strong>" + $("#joincode").val() + "</strong>");  
+            toast_message(
+              "Successfully joined room with code <strong>" +
+                $("#joincode").val() +
+                "</strong>",
+            );
             $("#ui-layer").animate(
               {
                 opacity: 0,
@@ -829,7 +833,7 @@ window.onload = function () {
           $("#sidebar-right").show();
         },
       );
-      toast_message("You have been removed from the room by the host")
+      toast_message("You have been removed from the room by the host");
     }
   });
 
@@ -1599,15 +1603,13 @@ window.onload = function () {
   });
 
   // handle public game finding
-
   socket.on("public-rooms-update", (rooms) => {
     $("#find-list").empty();
-    console.log(rooms);
 
     if (rooms.length == 0) {
-
+      $("#find-list").append(`<p>No public games available at the moment</p>`);
     } else {
-      for (let i =0; i < rooms.length; i++) {
+      for (let i = 0; i < rooms.length; i++) {
         $("#find-list").append(`      
         <div class="find-card">
           <p class="find-name">
@@ -1618,17 +1620,67 @@ window.onload = function () {
           <div class="find-player-count">
             <p>${rooms[i].players.length}/${rooms[i].settings.max_players} Players</p>
           </div>
-          <button style="margin-right:0px;margin-left:auto;">
+          <button style="margin-right:0px;margin-left:auto;" id="find-j-${rooms[i].code}">
             Join Game
           </button>
         </div>;
           `);
+        $("#find-j-" + rooms[i].code).on("click", function () {
+          socket.emit(
+            "join-room",
+            {
+              username: $("#username").val(),
+              room_code: rooms[i].code,
+            },
+            (callback) => {
+              if (callback.message == "success") {
+                // successfully joined room
+                $("#find-container").animate({
+                  opacity:0,
+                }, 250, function() {
+                  $("#find-container").hide();
+                })
+                toast_message(
+                  "Successfully joined room with code <strong>" +
+                    rooms[i].code +
+                    "</strong>",
+                );
+                $("#ui-layer").animate(
+                  {
+                    opacity: 0,
+                  },
+                  250,
+                  function () {
+                    $("#ui-layer").hide();
+                  },
+                );
+                $("#wr-settings").hide();
+                $("#pixi-overlay").css("opacity", 0);
+                $("#pixi-overlay").show();
+                $("#sidebar-left").hide();
+                $("#jcontainer").hide();
+
+                $("#sidebar-right").hide();
+                $("#pixi-overlay").animate(
+                  {
+                    opacity: 1,
+                  },
+                  250,
+                );
+                $("#host-actions-container").hide();
+                $("#non-host-actions-container").show();
+              } else {
+                toast_message(callback.message);
+              }
+            },
+          );
+        });
       }
     }
-  })
+  });
   $("#find-container").hide();
-  
-  $("#find").on("click", function() {
+
+  $("#find").on("click", function () {
     $("#find-container").css("opacity", 0);
     $("#find-container").css("display", "flex");
     $("#find-container").animate(
@@ -1637,14 +1689,18 @@ window.onload = function () {
       },
       500,
     );
-  })
+    socket.emit("request-public-rooms");
+  });
 
-  $("#find-close").on("click", function() {
-    $("#find-container").animate({
-      opacity:0,
-    }, 500, function() {
-      $("#find-container").hide();
-
-    })
-  })
+  $("#find-close").on("click", function () {
+    $("#find-container").animate(
+      {
+        opacity: 0,
+      },
+      500,
+      function () {
+        $("#find-container").hide();
+      },
+    );
+  });
 };

@@ -156,6 +156,16 @@ export const initSocket = (httpServer) => {
       socket.broadcast.emit("public-rooms-update", public_rooms);
     });
 
+    // handle public rooms request
+    socket.on("request-public-rooms", () => {
+      let public_rooms = Object.values(rooms)
+        .filter(
+          (r) => r.settings.visibility == "public" && r.state == "waiting",
+        )
+        .map((r) => r);
+      socket.emit("public-rooms-update", public_rooms);
+    });
+
     // settings update
     socket.on("update-settings", (data) => {
       let room = Object.values(rooms).find((r) =>
