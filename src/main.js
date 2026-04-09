@@ -1600,6 +1600,32 @@ window.onload = function () {
 
   // handle public game finding
 
+  socket.on("public-rooms-update", (rooms) => {
+    $("#find-list").empty();
+    console.log(rooms);
+
+    if (rooms.length == 0) {
+
+    } else {
+      for (let i =0; i < rooms.length; i++) {
+        $("#find-list").append(`      
+        <div class="find-card">
+          <p class="find-name">
+            <strong>
+              <span id="find-name-span">${String(rooms[i].players[0].username).trim()}</span>
+            </strong>'s Game
+          </p>
+          <div class="find-player-count">
+            <p>${rooms[i].players.length}/${rooms[i].settings.max_players} Players</p>
+          </div>
+          <button style="margin-right:0px;margin-left:auto;">
+            Join Game
+          </button>
+        </div>;
+          `);
+      }
+    }
+  })
   $("#find-container").hide();
   
   $("#find").on("click", function() {
@@ -1611,21 +1637,6 @@ window.onload = function () {
       },
       500,
     );
-
-                // <div class="find-card">
-                //   <p class="find-name">
-                //     <strong>
-                //       <span id="find-name-span">Player 1</span>
-                //     </strong>
-                //     's Game
-                //   </p>
-                //   <div class="find-player-count">
-                //     <p>2/4 Players</p>
-                //   </div>
-                //   <button style="margin-right:0px;margin-left:auto;">
-                //     Join Game
-                //   </button>
-                // </div>;
   })
 
   $("#find-close").on("click", function() {
