@@ -1,9 +1,10 @@
 // socket-server.js
 import { Server as SocketIOServer } from "socket.io";
-
+import { Filter } from "bad-words";
 let io;
 
 let rooms = {};
+const filter = new Filter();
 
 function generate_id(length) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -686,7 +687,7 @@ export const initSocket = (httpServer) => {
       if (room) {
         io.to(room.id).emit("recieve-chat", {
           username: room.players.find((p) => p.id === uid).username,
-          message: data.message,
+          message: filter.clean(data.message),
           id: uid,
         });
       }

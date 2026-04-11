@@ -19,6 +19,21 @@ const socket = io("http://localhost:3001", {
 socket.on("connect", () => {
   console.log("Connected to server with ID:", socket.id);
 });
+const AUTOCOMPLETE_MESSAGES = [
+  "Good Game!",
+  "Well Played!",
+  "Nice Move!",
+  "Close One!",
+  "Unlucky!",
+  "Lucky Roll!",
+  "Your turn!",
+  "Uh oh...",
+  "Watch out!",
+  "Not bad!",
+  "Safe for now...",
+  "Oops...",
+  "That was close!",
+]
 const GUIDE_PAGES = [
   {
     title: "Setup & Starting",
@@ -1408,6 +1423,27 @@ window.onload = function () {
 
   $("#chat-input").on("input", function (e) {
     $("#char-count").text($(this).val().length + "/50");
+    if ($(this).val().length > 0) {
+      // autocomplete options
+      let possible_words = [];
+      for (let i =0; i < AUTOCOMPLETE_MESSAGES.length; i++) {
+        if (AUTOCOMPLETE_MESSAGES[i].toLowerCase().startsWith($(this).val().toLowerCase())) {
+          possible_words.push(AUTOCOMPLETE_MESSAGES[i]);
+        }
+      }
+      $("#quick-chat-container").html("");
+      for (let i =0; i < possible_words.length; i++) {
+        $("#quick-chat-container").append(`
+          <button class="quick-chat">${possible_words[i]}</button>
+          `);
+      }
+      $(".quick-chat").on("click", function() {
+        $("#chat-input").val($(this).text());
+        $("#quick-chat-container").html("");
+      })
+    } else {
+      $("#quick-chat-container").html("");
+    }
   });
 
   // watching message send

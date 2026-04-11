@@ -45,9 +45,14 @@
    - [ ] Dark mode :)
    - [x] How to play guide
    - [x] Dice animation
-   - [ ] Chat filtering
-   - [ ] Public game finding?
-   - [ ] Piece movement animation
+   - [ ] Better chat features
+     - [ ] Filtering?
+     - [x] Reactions?
+     - [x] Quick chat? -> autocomplete
+   - [x] Public game finding?
+     - [ ] Public game watching!
+   - [ ] Piece movement animation -> just going to do very basic version
+   - [ ] Turn timer
    - [x] Game creation settings -> variants?
    - [x] Toast messages 
  - [ ] Issues

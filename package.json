@@ -10,6 +10,7 @@
     "dev": "vite"
   },
   "dependencies": {
+    "bad-words": "^4.0.0",
     "express": "^5.2.1",
     "jquery": "^4.0.0",
     "pixi-viewport": "^6.0.3",
