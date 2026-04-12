@@ -37,7 +37,6 @@
    - [x] Client-side UI
    - [x] Handle server side -> just broadcast to entire room
    - [x] Client side -> watch for new messages and add
-   - [ ] Additional options? reactions? 
  - [x] Figure out theme
    - [x] Minimliast game theme? 
  - [ ] Possible additions:
@@ -45,12 +44,17 @@
    - [ ] Dark mode :)
    - [x] How to play guide
    - [x] Dice animation
-   - [ ] Better chat features
-     - [ ] Filtering?
-     - [x] Reactions?
+   - [x] Better chat features
+     - [x] Filtering?
+     - [ ] Reactions?
      - [x] Quick chat? -> autocomplete
    - [x] Public game finding?
-     - [ ] Public game watching!
+     - [ ] Public game watching
+       - [x] Handle spectators disconnect
+       - [x] Spectators number count -> where do I even put it lol
+       - [x] Spectating information bar
+       - [x] Live updates without having a turn
+       - [x] Chat tags to separate players and spectators
    - [ ] Piece movement animation -> just going to do very basic version
    - [ ] Turn timer
    - [x] Game creation settings -> variants?

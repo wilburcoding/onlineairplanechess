@@ -41,6 +41,7 @@
       </div>
       <div id="pixi-overlay" style="pointer-events: none">
         <div id="sidebar-left" style="left: 0" class="sidebar">
+          <p id="spcount"><span id="spectators-count">0</span> Spectator(s)</p>
           <p style="font-size: 30px; margin-top: 0px; margin-bottom: 5px">
             Players List
           </p>
@@ -58,8 +59,7 @@
               <div id="messages"></div>
 
               <div id="chat-input-container">
-                <div id="quick-chat-container">
-                </div>
+                <div id="quick-chat-container"></div>
                 <p id="char-count">0/50</p>
                 <input
                   type="text"
@@ -72,6 +72,13 @@
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+        <div id="spectator-info-container">
+          <div id="spectator-info">
+            <i class="ph ph-binoculars"></i>
+            <p>Spectating Game</p>
+            <button id="leave-spectator">Leave</button>
           </div>
         </div>
         <div id="sidebar-right" style="right: 0" class="sidebar">

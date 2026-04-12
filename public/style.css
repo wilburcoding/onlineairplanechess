@@ -154,8 +154,8 @@ p {
   align-items: center;
   flex-direction: column;
   justify-content: flex-start;
-  min-width:50%;
-  min-height:30%;
+  min-width: 50%;
+  min-height: 30%;
 }
 
 #join-container {
@@ -556,11 +556,51 @@ button:disabled {
 .username {
   font-weight: 700;
   color: gray;
-  font-size: 13px;
+  font-size: 14px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.username-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   margin-left: 6px;
   margin-right: 6px;
-  margin-bottom: 4px;
-  margin-top: 10px;
+  margin-top: 3px;
+}
+
+.username-tag {
+  background-color: gray;
+  color: white;
+  padding: 2px 4px;
+  font-size: 12px;
+  border-radius: 5px;
+  height: auto;
+  margin: 0;
+  margin-left: 5px;
+}
+
+.username-tag.blue {
+  background-color: #4d80c4;
+}
+.username-tag.red {
+  background-color: #c25a40;
+}
+.username-tag.yellow {
+  background-color: #bca348;
+}
+.username-tag.green {
+  background-color: #58af8c;
+}
+
+.username-tag.spectator {
+  background-color: gray;
+}
+
+.username-tag p {
+  margin: 0;
 }
 
 #chat-input-container input {
@@ -585,24 +625,24 @@ button:disabled {
 #quick-chat-container {
   position: absolute;
   bottom: 50px;
-  left:0;
-  margin-left:10px;
-  width:200px;
-  height:auto;
-  padding:0;
+  left: 0;
+  margin-left: 10px;
+  width: 200px;
+  height: auto;
+  padding: 0;
 }
 .quick-chat {
   position: relative;
   background-color: white;
   opacity: 0.7;
-  margin-top:8px !important;
-  margin-bottom:0px !important;
-  border:solid 1px gray;
+  margin-top: 8px !important;
+  margin-bottom: 0px !important;
+  border: solid 1px gray;
   color: black;
-  height:30px !important;
-  font-size:15px !important;
-  width:auto !important;
-  font-weight:400 !important;
+  height: 30px !important;
+  font-size: 15px !important;
+  width: auto !important;
+  font-weight: 400 !important;
 }
 
 #chat-content {
@@ -1164,53 +1204,98 @@ button:disabled {
 }
 
 .find-card {
-  display:flex;
+  display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   background-color: #dce4f5;
-  padding:10px 15px;
+  padding: 10px 15px;
   border-radius: 5px;
-  width:70%;
+  width: 70%;
 }
 
 #find-list {
-  width:100%;
-  display:flex;
-  margin-top:10px;
+  width: 100%;
+  display: flex;
+  margin-top: 10px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 .find-player-count {
-  font-size:14px;
+  font-size: 14px;
   background-color: #4e7dba;
   color: white;
   padding: 3px 7px;
   margin: 0 10px;
-  border-radius:10px;
+  border-radius: 10px;
 }
 
 .find-name {
-  font-size:22px;
+  font-size: 22px;
 }
 
 .find-card button {
-  height:35px;
-  font-size:17px;
+  height: 35px;
+  font-size: 17px;
 }
 
 #find-close {
   position: absolute;
-  top:0;
-  right:0;
-  font-size:25px;
-  color:black;
-  margin:10px;
+  top: 0;
+  right: 0;
+  font-size: 25px;
+  color: black;
+  margin: 10px;
   transition-duration: 0.3s;
 }
 
 #find-close:hover {
   transform: rotateZ(90deg);
+}
+
+#spectator-info-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  z-index: 900;
+}
+
+#spectator-info {
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  color: black;
+  padding: 5px 15px;
+  border-radius: 10px;
+  align-items: center;
+  pointer-events: all;
+  justify-content: center;
+}
+
+#spectator-info i {
+  font-size:20px;
+  margin-right:6px;
+
+}
+
+#spectator-info button {
+  height: 30px;
+  width: 100px;
+  margin-left: 50px;
+}
+
+#spectator-info p {
+  font-size: 18px;
+}
+
+#spcount {
+  margin-bottom:2px;
+  margin-top:0px;
+  font-size:14px;
+  line-height: 13px;
 }

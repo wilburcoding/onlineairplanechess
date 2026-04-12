@@ -33,7 +33,7 @@ const AUTOCOMPLETE_MESSAGES = [
   "Safe for now...",
   "Oops...",
   "That was close!",
-]
+];
 const GUIDE_PAGES = [
   {
     title: "Setup & Starting",
@@ -933,6 +933,35 @@ window.onload = function () {
   // game start listener
   socket.on("game-start", (room_data) => {
     game_data = room_data;
+
+    // make sure everything is hidden
+    $("#ui-layer").animate(
+      {
+        opacity: 0,
+      },
+      250,
+      function () {
+        $("#ui-layer").hide();
+      },
+    );
+    $("#find-container").animate(
+      {
+        opacity: 0,
+      },
+      500,
+      function () {
+        $("#find-container").hide();
+      },
+    );
+    $("#pixi-overlay").css("opacity", 0);
+    $("#pixi-overlay").show();
+    $("#jcontainer").hide();
+    $("#pixi-overlay").animate(
+      {
+        opacity: 1,
+      },
+      250,
+    );
     $("#waiting-room-container").hide();
     $("#wr-settings").show();
     $("#sidebar-left").show();
@@ -942,6 +971,19 @@ window.onload = function () {
       scaleY: 0.25,
       time: 1000,
     });
+    // check if spectator
+    if (
+      game_data.players.filter((player) => player.id == socket.id).length == 0
+    ) {
+      $("#spectator-info-container").css("opacity", 0);
+      $("#spectator-info-container").show();
+      $("#spectator-info-container").animate(
+        {
+          opacity: 1,
+        },
+        500,
+      );
+    }
     // create sprites
 
     for (let i = 0; i < room_data.players.length; i++) {
@@ -1006,6 +1048,9 @@ window.onload = function () {
   // next move game listener
   socket.on("game-update", (room_data) => {
     game_data = room_data;
+
+    console.log(game_data);
+    $("#spectators-count").text(game_data.spectators.length);
     // check if move is for current player
     $("#turn-status-container").css(
       "background-color",
@@ -1426,21 +1471,25 @@ window.onload = function () {
     if ($(this).val().length > 0) {
       // autocomplete options
       let possible_words = [];
-      for (let i =0; i < AUTOCOMPLETE_MESSAGES.length; i++) {
-        if (AUTOCOMPLETE_MESSAGES[i].toLowerCase().startsWith($(this).val().toLowerCase())) {
+      for (let i = 0; i < AUTOCOMPLETE_MESSAGES.length; i++) {
+        if (
+          AUTOCOMPLETE_MESSAGES[i]
+            .toLowerCase()
+            .startsWith($(this).val().toLowerCase())
+        ) {
           possible_words.push(AUTOCOMPLETE_MESSAGES[i]);
         }
       }
       $("#quick-chat-container").html("");
-      for (let i =0; i < possible_words.length; i++) {
+      for (let i = 0; i < possible_words.length; i++) {
         $("#quick-chat-container").append(`
           <button class="quick-chat">${possible_words[i]}</button>
           `);
       }
-      $(".quick-chat").on("click", function() {
+      $(".quick-chat").on("click", function () {
         $("#chat-input").val($(this).text());
         $("#quick-chat-container").html("");
-      })
+      });
     } else {
       $("#quick-chat-container").html("");
     }
@@ -1461,10 +1510,16 @@ window.onload = function () {
     const message = data.message;
     const sender = data.username;
     const uid = data.id;
+    console.log(data);
     if (message_history.length == 0) {
       $("#messages").append(`
       <div class="message-container ${uid == socket.id ? "self" : ""}">
-        <p class="username">${sender.toUpperCase()}</p>
+        <div class="username-container">
+          <p class="username">${sender.toUpperCase()}</p>
+          <div class="username-tag ${data.type == "spectator" ? "spectator" : data.color}">
+            <p>${data.type == "spectator" ? "Spectator" : "Player"}</p>
+          </div>
+        </div>
         <div class="message">
           <p>${message}</p>
         </div>
@@ -1472,7 +1527,18 @@ window.onload = function () {
     } else {
       $("#messages").append(`
       <div class="message-container ${uid == socket.id ? "self" : ""}">
-        ${message_history[message_history.length - 1].id != uid ? `<p class="username">${sender.toUpperCase()}</p>` : ""}
+        ${
+          message_history[message_history.length - 1].id != uid
+            ? `
+        <div class="username-container">
+          <p class="username">${sender.toUpperCase()}</p>
+          <div class="username-tag ${data.type == "spectator" ? "spectator" : data.color}">
+            <p>${data.type == "spectator" ? "Spectator" : "Player"}</p>
+          </div>
+        </div>
+        `
+            : ""
+        }
         <div class="message">
           <p>${message}</p>
         </div>
@@ -1657,59 +1723,70 @@ window.onload = function () {
             <p>${rooms[i].players.length}/${rooms[i].settings.max_players} Players</p>
           </div>
           <button style="margin-right:0px;margin-left:auto;" id="find-j-${rooms[i].code}">
-            Join Game
+          ${rooms[i].state == "active-game" ? "Spectate Game" : "Join Game"}
           </button>
         </div>;
           `);
         $("#find-j-" + rooms[i].code).on("click", function () {
-          socket.emit(
-            "join-room",
-            {
-              username: $("#username").val(),
+          if (rooms[i].state == "active-game") {
+            socket.emit("spectate-game", {
               room_code: rooms[i].code,
-            },
-            (callback) => {
-              if (callback.message == "success") {
-                // successfully joined room
-                $("#find-container").animate({
-                  opacity:0,
-                }, 250, function() {
-                  $("#find-container").hide();
-                })
-                toast_message(
-                  "Successfully joined room with code <strong>" +
-                    rooms[i].code +
-                    "</strong>",
-                );
-                $("#ui-layer").animate(
-                  {
-                    opacity: 0,
-                  },
-                  250,
-                  function () {
-                    $("#ui-layer").hide();
-                  },
-                );
-                $("#wr-settings").hide();
-                $("#pixi-overlay").css("opacity", 0);
-                $("#pixi-overlay").show();
-                $("#sidebar-left").hide();
-                $("#jcontainer").hide();
+              username: $("#username").val(),
+            });
+          } else {
+            socket.emit(
+              "join-room",
+              {
+                username: $("#username").val(),
+                room_code: rooms[i].code,
+              },
+              (callback) => {
+                if (callback.message == "success") {
+                  // successfully joined room
+                  $("#find-container").animate(
+                    {
+                      opacity: 0,
+                    },
+                    250,
+                    function () {
+                      $("#find-container").hide();
+                    },
+                  );
+                  toast_message(
+                    "Successfully joined room with code <strong>" +
+                      rooms[i].code +
+                      "</strong>",
+                  );
+                  $("#ui-layer").animate(
+                    {
+                      opacity: 0,
+                    },
+                    250,
+                    function () {
+                      $("#ui-layer").hide();
+                    },
+                  );
+                  $("#wr-settings").hide();
+                  $("#pixi-overlay").css("opacity", 0);
+                  $("#pixi-overlay").show();
+                  $("#sidebar-left").hide();
+                  $("#jcontainer").hide();
 
-                $("#sidebar-right").hide();
-                $("#pixi-overlay").animate(
-                  {
-                    opacity: 1,
-                  },
-                  250,
-                );
-                $("#host-actions-container").hide();
-                $("#non-host-actions-container").show();
-              } else {
-                toast_message(callback.message);
-              }
-            },
-          );
+                  $("#sidebar-right").hide();
+                  $("#pixi-overlay").animate(
+                    {
+                      opacity: 1,
+                    },
+                    250,
+                  );
+                  $("#host-actions-container").hide();
+                  $("#non-host-actions-container").show();
+                } else {
+                  toast_message(callback.message);
+                }
+              },
+            );
+          }
         });
       }
     }
@@ -1736,6 +1813,30 @@ window.onload = function () {
       500,
       function () {
         $("#find-container").hide();
+      },
+    );
+  });
+
+  $("#spectator-info-container").hide();
+
+  $("#leave-spectator").on("click", function () {
+    $("#ui-layer").show();
+    $("#ui-layer").animate(
+      {
+        opacity: 1,
+      },
+      250,
+    );
+    $("#pixi-overlay").animate(
+      {
+        opacity: 0,
+      },
+      250,
+      function () {
+        $("#pixi-overlay").hide();
+        $("#sidebar-left").show();
+        $("#sidebar-right").show();
+        $("#spectator-info-container").hide();
       },
     );
   });

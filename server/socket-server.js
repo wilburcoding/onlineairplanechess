@@ -122,14 +122,16 @@ export const initSocket = (httpServer) => {
           }
 
           let public_rooms = Object.values(rooms)
-            .filter(
-              (r) => r.settings.visibility == "public" && r.state == "waiting",
-            )
+            .filter((r) => r.settings.visibility == "public")
             .map((r) => r);
           socket.broadcast.emit("public-rooms-update", public_rooms);
         }
       } else {
-        // do nothing
+        // check if user was spectating a game
+        let room = Object.values(rooms).find((r) => r.spectators && r.spectators.some((p) => p.id === uid));
+        if (room) {
+          room.spectators = room.spectators.filter((p) => p.id !== uid);
+        }
       }
     });
 
@@ -150,9 +152,7 @@ export const initSocket = (httpServer) => {
       socket.join(room_data.id);
       socket.emit("waiting-room-update", room_data);
       let public_rooms = Object.values(rooms)
-        .filter(
-          (r) => r.settings.visibility == "public" && r.state == "waiting",
-        )
+        .filter((r) => r.settings.visibility == "public")
         .map((r) => r);
       socket.broadcast.emit("public-rooms-update", public_rooms);
     });
@@ -160,9 +160,7 @@ export const initSocket = (httpServer) => {
     // handle public rooms request
     socket.on("request-public-rooms", () => {
       let public_rooms = Object.values(rooms)
-        .filter(
-          (r) => r.settings.visibility == "public" && r.state == "waiting",
-        )
+        .filter((r) => r.settings.visibility == "public")
         .map((r) => r);
       socket.emit("public-rooms-update", public_rooms);
     });
@@ -184,9 +182,7 @@ export const initSocket = (httpServer) => {
         }
       }
       let public_rooms = Object.values(rooms)
-        .filter(
-          (r) => r.settings.visibility == "public" && r.state == "waiting",
-        )
+        .filter((r) => r.settings.visibility == "public")
         .map((r) => r);
       socket.broadcast.emit("public-rooms-update", public_rooms);
     });
@@ -214,9 +210,7 @@ export const initSocket = (httpServer) => {
         }
       }
       let public_rooms = Object.values(rooms)
-        .filter(
-          (r) => r.settings.visibility == "public" && r.state == "waiting",
-        )
+        .filter((r) => r.settings.visibility == "public")
         .map((r) => r);
       socket.broadcast.emit("public-rooms-update", public_rooms);
     });
@@ -225,6 +219,10 @@ export const initSocket = (httpServer) => {
     socket.on("join-room", (data, callback) => {
       let room = Object.values(rooms).find((r) => r.code === data.room_code);
       if (room) {
+        if (room.state == "active-game") {
+          callback({ message: "The game in this room has already started." });
+          return;
+        }
         if (room.players.length >= room.settings.max_players) {
           callback({ message: "The room you are trying to join is full." });
           return;
@@ -240,9 +238,7 @@ export const initSocket = (httpServer) => {
         });
       }
       let public_rooms = Object.values(rooms)
-        .filter(
-          (r) => r.settings.visibility == "public" && r.state == "waiting",
-        )
+        .filter((r) => r.settings.visibility == "public")
         .map((r) => r);
       socket.broadcast.emit("public-rooms-update", public_rooms);
     });
@@ -261,6 +257,7 @@ export const initSocket = (httpServer) => {
           room.tcount = 0;
           room.update = true;
           room.history = [];
+          room.spectators = [];
           for (let i = 0; i < room.players.length; i++) {
             room.players[i].color = COLORS[i];
             room.players[i].pieces = [];
@@ -284,9 +281,7 @@ export const initSocket = (httpServer) => {
         io.to(room.id).emit("game-update", room);
       }
       let public_rooms = Object.values(rooms)
-        .filter(
-          (r) => r.settings.visibility == "public" && r.state == "waiting",
-        )
+        .filter((r) => r.settings.visibility == "public")
         .map((r) => r);
       socket.broadcast.emit("public-rooms-update", public_rooms);
     });
@@ -689,9 +684,46 @@ export const initSocket = (httpServer) => {
           username: room.players.find((p) => p.id === uid).username,
           message: filter.clean(data.message),
           id: uid,
+          type: "player",
+          color: room.players.find((p) => p.id === uid).color
         });
+      } else {
+        // check if is spectator
+        let room = Object.values(rooms).find(
+          (r) => r.spectators && r.spectators.some((p) => p.id === uid),
+        );
+        if (room) {
+          io.to(room.id).emit("recieve-chat", {
+            username: room.spectators.find((p) => p.id === uid).username,
+            message: filter.clean(data.message),
+            id: uid,
+            type: "spectator",
+            color: null
+          });
+        }
       }
     });
+
+    // handle spectate game
+    socket.on("spectate-game", (data) => {
+      let room = Object.values(rooms).find((r) => r.code === data.room_code);
+      if (room) {
+        room.spectators.push({ id: uid, username: data.username});
+        socket.join(room.id);
+        socket.emit("game-start", room);
+        socket.emit("game-update", room);
+      }
+    });
+
+    // handle spectator leaving
+    socket.on("leave-spectate", () => {
+      let room = Object.values(rooms).find((r) => r.spectators && r.spectators.some((p) => p.id === uid));
+      if (room) {
+        room.spectators = room.spectators.filter((p) => p.id !== uid);
+        socket.leave(room.id);
+
+      }
+    })
   });
 
   return io;
