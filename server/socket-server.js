@@ -61,7 +61,6 @@ function check_win(io, room) {
 export const initSocket = (httpServer) => {
   io = new SocketIOServer(httpServer, {
     cors: {
-      origin: "http://localhost:8080",
       methods: ["GET", "POST"],
       credentials: true,
     },
@@ -128,7 +127,9 @@ export const initSocket = (httpServer) => {
         }
       } else {
         // check if user was spectating a game
-        let room = Object.values(rooms).find((r) => r.spectators && r.spectators.some((p) => p.id === uid));
+        let room = Object.values(rooms).find(
+          (r) => r.spectators && r.spectators.some((p) => p.id === uid),
+        );
         if (room) {
           room.spectators = room.spectators.filter((p) => p.id !== uid);
         }
@@ -685,7 +686,7 @@ export const initSocket = (httpServer) => {
           message: filter.clean(data.message),
           id: uid,
           type: "player",
-          color: room.players.find((p) => p.id === uid).color
+          color: room.players.find((p) => p.id === uid).color,
         });
       } else {
         // check if is spectator
@@ -698,7 +699,7 @@ export const initSocket = (httpServer) => {
             message: filter.clean(data.message),
             id: uid,
             type: "spectator",
-            color: null
+            color: null,
           });
         }
       }
@@ -708,7 +709,7 @@ export const initSocket = (httpServer) => {
     socket.on("spectate-game", (data) => {
       let room = Object.values(rooms).find((r) => r.code === data.room_code);
       if (room) {
-        room.spectators.push({ id: uid, username: data.username});
+        room.spectators.push({ id: uid, username: data.username });
         socket.join(room.id);
         socket.emit("game-start", room);
         socket.emit("game-update", room);
@@ -717,13 +718,14 @@ export const initSocket = (httpServer) => {
 
     // handle spectator leaving
     socket.on("leave-spectate", () => {
-      let room = Object.values(rooms).find((r) => r.spectators && r.spectators.some((p) => p.id === uid));
+      let room = Object.values(rooms).find(
+        (r) => r.spectators && r.spectators.some((p) => p.id === uid),
+      );
       if (room) {
         room.spectators = room.spectators.filter((p) => p.id !== uid);
         socket.leave(room.id);
-
       }
-    })
+    });
   });
 
   return io;

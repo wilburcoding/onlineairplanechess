@@ -49,7 +49,7 @@
      - [ ] Reactions?
      - [x] Quick chat? -> autocomplete
    - [x] Public game finding?
-     - [ ] Public game watching
+     - [x] Public game watching
        - [x] Handle spectators disconnect
        - [x] Spectators number count -> where do I even put it lol
        - [x] Spectating information bar
