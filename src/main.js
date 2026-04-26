@@ -13,7 +13,6 @@ import { Viewport } from "pixi-viewport";
 import { io } from "socket.io-client";
 
 const socket = io();
-
 socket.on("connect", () => {
   console.log("Connected to server with ID:", socket.id);
 });

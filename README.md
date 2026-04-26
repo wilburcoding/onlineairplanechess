@@ -1,5 +1,15 @@
 # Online Airplane Chess
 
+Multiplayer implementation of Airplane Chess!
+
+## Installation + Usage
+
+ - Clone this repo with `git clone https://github.com/wilburcoding/onlineairplanechess`
+ - Install dependencies using `npm install`
+ - Create a build using `npm run build`
+ - Start server using `node ./server/index.js`
+ - The game should be live at `http://localhost:3001`
+
 ## Goals
  - Implement Airplane Chess
  - Multiplayer functionality?
